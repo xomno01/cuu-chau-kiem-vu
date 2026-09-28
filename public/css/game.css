@@ -1,0 +1,4693 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,700;1,400&family=Cinzel:wght@600;800&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+body, html {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-color: #0b0f19;
+  font-family: 'Noto Serif', serif, sans-serif;
+  color: #f1f5f9;
+}
+
+/* ============================================================
+   MÀN HÌNH ĐĂNG NHẬP & CHỌN MÔN PHÁI (LOGIN SCREEN)
+   ============================================================ */
+#screen-login {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle at center, rgba(15, 23, 42, 0.75) 0%, rgba(3, 7, 18, 0.95) 100%),
+              url('../assets/images/banner.jpg') no-repeat center center / cover;
+}
+
+.login-panel {
+  position: relative;
+  width: 880px;
+  max-width: 95vw;
+  background: rgba(15, 23, 42, 0.94);
+  border: 2px solid #d4af37;
+  border-radius: 12px;
+  box-shadow: 0 0 45px rgba(212, 175, 55, 0.4), inset 0 0 25px rgba(0, 0, 0, 0.8);
+  padding: 35px 45px;
+  text-align: center;
+  backdrop-filter: blur(10px);
+}
+
+.game-title-header h1 {
+  font-family: 'Cinzel', serif;
+  font-size: 42px;
+  color: #facc15;
+  text-shadow: 0 0 15px rgba(250, 204, 21, 0.6), 2px 2px 4px #000;
+  letter-spacing: 3px;
+  margin-bottom: 5px;
+}
+
+.game-subtitle {
+  font-size: 16px;
+  color: #94a3b8;
+  letter-spacing: 2px;
+  margin-bottom: 25px;
+}
+
+.sect-cards-container {
+  display: flex;
+  gap: 25px;
+  justify-content: center;
+  margin-bottom: 25px;
+}
+
+.sect-card {
+  flex: 1;
+  background: rgba(30, 41, 59, 0.8);
+  border: 2px solid #475569;
+  border-radius: 8px;
+  padding: 18px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.sect-card:hover {
+  transform: translateY(-4px);
+  border-color: #facc15;
+  box-shadow: 0 8px 25px rgba(250, 204, 21, 0.25);
+}
+
+.sect-card.selected {
+  border-color: #facc15;
+  background: rgba(51, 65, 85, 0.9);
+  box-shadow: 0 0 25px rgba(250, 204, 21, 0.4);
+}
+
+.sect-preview-img {
+  width: 140px;
+  height: 140px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 3px solid #d4af37;
+  margin: 0 auto 12px auto;
+  box-shadow: 0 0 15px rgba(0,0,0,0.6);
+  background: #0f172a;
+}
+
+.sect-card h3 {
+  font-size: 20px;
+  color: #38bdf8;
+  margin-bottom: 6px;
+}
+.sect-card[data-sect="xiaoyao"] h3 { color: #34d399; }
+
+.sect-card p {
+  font-size: 13px;
+  color: #cbd5e1;
+  line-height: 1.5;
+}
+
+.input-name-group {
+  margin-bottom: 25px;
+}
+
+#char-name-input {
+  width: 320px;
+  max-width: 80%;
+  padding: 10px 16px;
+  background: rgba(30, 41, 59, 0.9);
+  border: 1.5px solid #d4af37;
+  border-radius: 6px;
+  color: #f8fafc;
+  font-family: inherit;
+  font-size: 16px;
+  text-align: center;
+  outline: none;
+}
+
+.btn-enter-wuxia {
+  padding: 14px 45px;
+  font-family: 'Cinzel', serif;
+  font-size: 18px;
+  font-weight: bold;
+  color: #0f172a;
+  background: linear-gradient(135deg, #fde047 0%, #d4af37 100%);
+  border: 2px solid #fef08a;
+  border-radius: 8px;
+  cursor: pointer;
+  box-shadow: 0 0 20px rgba(250, 204, 21, 0.6);
+  transition: all 0.25s ease;
+  letter-spacing: 2px;
+}
+
+.btn-enter-wuxia:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 35px rgba(250, 204, 21, 0.85);
+}
+
+/* ============================================================
+   SCREEN GAME CHÍNH
+   ============================================================ */
+#screen-game {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+#game-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* Thông Báo Giang Hồ Top Banner */
+.wuxia-banner {
+  position: absolute;
+  top: 15px;
+  left: 50%;
+  transform: translateX(-50%) translateY(-50px);
+  background: linear-gradient(90deg, transparent, rgba(15, 23, 42, 0.95) 20%, rgba(15, 23, 42, 0.95) 80%, transparent);
+  border-top: 1px solid #d4af37;
+  border-bottom: 1px solid #d4af37;
+  padding: 8px 60px;
+  color: #fde047;
+  font-size: 16px;
+  font-weight: bold;
+  text-shadow: 0 0 8px #f59e0b;
+  opacity: 0;
+  transition: all 0.4s ease;
+  pointer-events: none;
+  z-index: 50;
+}
+.wuxia-banner.show {
+  transform: translateX(-50%) translateY(0);
+  opacity: 1;
+}
+
+/* BOSS HEALTH BAR */
+#boss-top-bar {
+  position: absolute;
+  top: 25px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 600px;
+  max-width: 80vw;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  z-index: 40;
+}
+
+.boss-bar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: 10px;
+  margin-bottom: 5px;
+}
+
+.boss-bar-title {
+  font-family: 'Cinzel', serif;
+  font-size: 16px;
+  font-weight: bold;
+  color: #ef4444;
+  text-shadow: 0 0 10px #b91c1c, 1px 1px 2px #000;
+}
+
+.boss-distance-badge {
+  font-size: 12px;
+  color: #38bdf8;
+  font-weight: bold;
+  background: rgba(15, 23, 42, 0.85);
+  padding: 2px 10px;
+  border-radius: 12px;
+  border: 1px solid #38bdf8;
+  text-shadow: 0 0 8px rgba(56, 189, 248, 0.8);
+  white-space: nowrap;
+}
+
+.btn-goto-boss-action {
+  background: linear-gradient(135deg, #991b1b, #dc2626);
+  color: #fff;
+  font-size: 11px;
+  font-weight: bold;
+  padding: 4px 12px;
+  border: 1.5px solid #facc15;
+  border-radius: 6px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+  box-shadow: 0 0 10px rgba(220, 38, 38, 0.6);
+}
+
+.btn-goto-boss-action:hover {
+  transform: scale(1.06);
+  background: linear-gradient(135deg, #dc2626, #ef4444);
+  box-shadow: 0 0 16px rgba(250, 204, 21, 0.8);
+}
+
+.btn-hunt-boss {
+  background: linear-gradient(135deg, #7c2d12, #ea580c);
+  color: #fef08a;
+  font-size: 12px;
+  font-weight: bold;
+  padding: 6px 14px;
+  border: 1.5px solid #f59e0b;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 0 10px rgba(234, 88, 12, 0.5);
+}
+
+.btn-hunt-boss:hover {
+  transform: scale(1.05);
+  background: linear-gradient(135deg, #c2410c, #f97316);
+  box-shadow: 0 0 16px rgba(245, 158, 11, 0.8);
+}
+
+.btn-hunt-boss.active {
+  background: linear-gradient(135deg, #b91c1c, #ef4444);
+  border-color: #facc15;
+  color: #fff;
+  box-shadow: 0 0 18px rgba(239, 68, 68, 0.9);
+}
+
+.boss-bar-track {
+  position: relative;
+  width: 100%;
+  height: 18px;
+  background: rgba(15, 23, 42, 0.9);
+  border: 2px solid #d4af37;
+  border-radius: 9px;
+  overflow: hidden;
+  box-shadow: 0 0 15px rgba(239, 68, 68, 0.4);
+}
+
+#boss-bar-hp-fill {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, #b91c1c, #ef4444);
+  transition: width 0.2s ease;
+}
+
+#boss-bar-hp-text {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: bold;
+  color: #fff;
+  text-shadow: 1px 1px 2px #000;
+}
+
+/* ============================================================
+   HUD NGƯỜI CHƠI (TOP-LEFT)
+   ============================================================ */
+.player-hud-frame {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  background: rgba(15, 23, 42, 0.9);
+  border: 1.5px solid #d4af37;
+  border-radius: 40px 12px 12px 40px;
+  padding: 8px 20px 8px 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+  z-index: 30;
+  backdrop-filter: blur(6px);
+}
+
+.player-avatar-wrapper {
+  position: relative;
+  width: 72px;
+  height: 72px;
+}
+
+.player-avatar-img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 2.5px solid #facc15;
+  box-shadow: 0 0 12px rgba(250, 204, 21, 0.5);
+  background: #0f172a;
+}
+
+.level-badge {
+  position: absolute;
+  bottom: -4px;
+  right: -4px;
+  background: #d4af37;
+  color: #0f172a;
+  font-size: 11px;
+  font-weight: bold;
+  padding: 2px 6px;
+  border-radius: 10px;
+  border: 1px solid #fff;
+}
+
+.player-info-bars {
+  width: 220px;
+}
+
+.player-meta-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.player-name-text {
+  font-size: 15px;
+  font-weight: bold;
+  color: #f8fafc;
+}
+
+.badge-sect {
+  font-size: 11px;
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-weight: bold;
+}
+.sect-huashan { background: rgba(56, 189, 248, 0.25); color: #38bdf8; border: 1px solid #38bdf8; }
+.sect-xiaoyao { background: rgba(52, 211, 153, 0.25); color: #34d399; border: 1px solid #34d399; }
+
+.badge-realm {
+  font-size: 11px;
+  color: #facc15;
+  background: rgba(250, 204, 21, 0.15);
+  padding: 1px 6px;
+  border-radius: 4px;
+  border: 1px solid #ca8a04;
+}
+
+.bar-container {
+  position: relative;
+  width: 100%;
+  height: 12px;
+  background: rgba(30, 41, 59, 0.9);
+  border-radius: 6px;
+  margin-bottom: 4px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.bar-fill { height: 100%; transition: width 0.15s ease; }
+.bar-hp { background: linear-gradient(90deg, #dc2626, #ef4444); }
+.bar-container.bar-exp {
+  height: 13px;
+  background: rgba(15, 23, 42, 0.95);
+  border: 1px solid rgba(250, 204, 21, 0.4);
+  margin-bottom: 0;
+}
+.bar-fill.bar-exp {
+  height: 100%;
+  background: linear-gradient(90deg, #b45309, #f59e0b, #fef08a);
+}
+
+.bar-text {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 9px;
+  font-weight: bold;
+  color: #fff;
+  text-shadow: 1px 1px 1px #000;
+}
+
+.player-sub-stats {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: #cbd5e1;
+  margin-top: 4px;
+}
+.gold-stat { color: #fde047; font-weight: bold; }
+.power-stat { color: #fb923c; font-weight: bold; }
+
+/* ============================================================
+   MINIMAP (TOP-RIGHT)
+   ============================================================ */
+.minimap-frame {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 240px;
+  height: 150px;
+  background: rgba(15, 23, 42, 0.9);
+  border: 2px solid #d4af37;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
+  z-index: 30;
+}
+
+#minimap-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.minimap-title {
+  position: absolute;
+  bottom: 4px;
+  right: 8px;
+  font-size: 10px;
+  color: #e2e8f0;
+  text-shadow: 1px 1px 2px #000;
+  pointer-events: none;
+}
+
+/* ============================================================
+   DOCK NÚT MENU BÊN PHẢI (RIGHT DOCK)
+   ============================================================ */
+.right-dock-menu {
+  position: absolute;
+  top: 185px;
+  right: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 30;
+}
+
+.btn-dock-icon {
+  position: relative;
+  width: 44px;
+  height: 44px;
+  padding: 3px;
+  background: radial-gradient(circle, rgba(30, 41, 59, 0.92), rgba(15, 23, 42, 0.98));
+  border: 1.5px solid #d4af37;
+  border-radius: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+  backdrop-filter: blur(6px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.6), inset 0 0 6px rgba(212, 175, 55, 0.25);
+}
+
+.btn-dock-icon:hover {
+  transform: scale(1.15) translateY(-2px);
+  background: radial-gradient(circle, rgba(51, 65, 85, 0.98), rgba(30, 41, 59, 1));
+  border-color: #facc15;
+  box-shadow: 0 0 16px rgba(250, 204, 21, 0.75), inset 0 0 10px rgba(250, 204, 21, 0.4);
+}
+
+.btn-dock-icon:active {
+  transform: scale(0.95);
+}
+
+.dock-icon-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  pointer-events: none;
+  filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.6));
+  transition: transform 0.22s ease;
+}
+
+.btn-dock-icon:hover .dock-icon-img {
+  transform: scale(1.05);
+}
+
+#btn-dock-revenant {
+  background: radial-gradient(circle, #881337, #4c0519) !important;
+  border-color: #f43f5e !important;
+  box-shadow: 0 0 14px rgba(244, 63, 94, 0.8), inset 0 0 8px rgba(244, 63, 94, 0.5) !important;
+  animation: pulse-revenant 1.6s infinite alternate;
+}
+
+@keyframes pulse-revenant {
+  0% { box-shadow: 0 0 10px rgba(244, 63, 94, 0.6); }
+  100% { box-shadow: 0 0 22px rgba(244, 63, 94, 1); transform: scale(1.08); }
+}
+
+/* ============================================================
+   HOTBAR THANH KỸ NĂNG & QUICK POTIONS (BOTTOM-CENTER)
+   ============================================================ */
+.bottom-control-area {
+  position: absolute;
+  bottom: 25px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  z-index: 30;
+}
+
+.control-top-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.btn-auto-combat {
+  padding: 6px 18px;
+  font-size: 12px;
+  font-weight: bold;
+  background: rgba(30, 41, 59, 0.85);
+  border: 1.5px solid #64748b;
+  border-radius: 20px;
+  color: #cbd5e1;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+.btn-auto-combat.active {
+  background: #b91c1c;
+  border-color: #ef4444;
+  color: #fff;
+  box-shadow: 0 0 15px rgba(239, 68, 68, 0.6);
+}
+
+.skills-hotbar-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(15, 23, 42, 0.92);
+  padding: 8px 18px;
+  border: 2px solid #d4af37;
+  border-radius: 14px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(6px);
+}
+
+/* 2 Ô Dược Phẩm Nhanh (Bơm Máu Q, Bơm Mana E, Thiền Định T) */
+.quick-potions-group {
+  display: flex;
+  gap: 8px;
+  padding-right: 12px;
+  border-right: 1.5px solid #475569;
+}
+
+.quick-potion-slot {
+  position: relative;
+  width: 52px;
+  height: 52px;
+  border: 2px solid #64748b;
+  border-radius: 8px;
+  background: #1e293b;
+  cursor: pointer;
+  overflow: hidden;
+  transition: all 0.2s ease;
+}
+.quick-potion-slot:hover { transform: translateY(-3px); border-color: #facc15; }
+.quick-potion-slot.slot-hp { border-color: #ef4444; }
+.quick-potion-slot.slot-mp { border-color: #38bdf8; }
+.quick-potion-slot.slot-meditate { border-color: #10b981; }
+
+.quick-potion-count {
+  position: absolute;
+  bottom: 2px;
+  right: 3px;
+  background: rgba(0, 0, 0, 0.85);
+  color: #fff;
+  font-size: 10px;
+  font-weight: bold;
+  padding: 1px 4px;
+  border-radius: 3px;
+}
+
+.skills-hotbar {
+  display: flex;
+  gap: 10px;
+}
+
+.skill-slot {
+  position: relative;
+  width: 58px;
+  height: 58px;
+  border: 2px solid #475569;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #0f172a;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.skill-slot:hover {
+  transform: translateY(-3px);
+  border-color: #facc15;
+  box-shadow: 0 0 15px rgba(250, 204, 21, 0.5);
+}
+
+.skill-icon {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.skill-hotkey-badge {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  background: rgba(0, 0, 0, 0.75);
+  color: #facc15;
+  font-size: 10px;
+  font-weight: bold;
+  padding: 1px 5px;
+  border-radius: 3px;
+  border: 1px solid rgba(250, 204, 21, 0.4);
+}
+
+.skill-slot.slot-dash { border-color: #38bdf8; }
+
+/* ============================================================
+   KHUNG CHAT GIANG HỒ (BOTTOM-LEFT)
+   ============================================================ */
+.chat-dock {
+  position: absolute;
+  bottom: 25px;
+  left: 20px;
+  width: 380px;
+  height: 230px;
+  background: rgba(15, 23, 42, 0.92);
+  border: 1.5px solid #d4af37;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  z-index: 30;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+}
+
+.chat-channel-tabs {
+  display: flex;
+  background: rgba(30, 41, 59, 0.95);
+  border-bottom: 1px solid rgba(212, 175, 55, 0.35);
+  padding: 3px 6px;
+  gap: 6px;
+}
+
+.chat-tab-btn {
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  color: #94a3b8;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.chat-tab-btn:hover {
+  color: #f1f5f9;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.chat-tab-btn.active {
+  background: rgba(212, 175, 55, 0.2);
+  border-color: #d4af37;
+  color: #facc15;
+  box-shadow: 0 0 8px rgba(212, 175, 55, 0.3);
+}
+
+.chat-messages {
+  flex: 1;
+  padding: 8px;
+  overflow-y: auto;
+  font-size: 12px;
+  line-height: 1.5;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.chat-msg {
+  word-break: break-word;
+  animation: fadeInChat 0.2s ease-out;
+}
+
+@keyframes fadeInChat {
+  from { opacity: 0; transform: translateY(3px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.msg-system {
+  color: #fde047;
+  background: rgba(234, 179, 8, 0.08);
+  border-left: 2px solid #eab308;
+  padding: 2px 6px;
+  border-radius: 3px;
+}
+
+.msg-world {
+  color: #f1f5f9;
+  padding: 2px 4px;
+}
+
+.chat-tag-sys { color: #f59e0b; font-weight: bold; }
+.chat-tag-world { color: #38bdf8; font-weight: bold; }
+.chat-realm-tag {
+  color: #c084fc;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 0 3px;
+  background: rgba(192, 132, 252, 0.15);
+  border-radius: 3px;
+  margin-right: 3px;
+}
+.chat-sender { color: #38bdf8; font-weight: bold; }
+.chat-text { color: #f1f5f9; }
+.chat-text-sys { color: #fef08a; }
+
+.chat-input-bar {
+  display: flex;
+  align-items: center;
+  border-top: 1px solid #334155;
+  background: rgba(30, 41, 59, 0.95);
+  padding: 2px 6px;
+}
+
+.chat-send-channel-tag {
+  color: #38bdf8;
+  font-size: 11px;
+  font-weight: bold;
+  white-space: nowrap;
+  padding: 0 4px;
+}
+
+#chat-input-box {
+  flex: 1;
+  background: transparent;
+  border: none;
+  padding: 6px 8px;
+  color: #fff;
+  font-size: 12px;
+  outline: none;
+}
+
+.btn-chat-send {
+  padding: 5px 12px;
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  border: 1px solid #3b82f6;
+  border-radius: 4px;
+  color: #fff;
+  font-size: 12px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-chat-send:hover {
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  box-shadow: 0 0 8px rgba(59, 130, 246, 0.5);
+}
+
+/* ============================================================
+   FLOATING ITEM TOOLTIP BÁM THEO CHUỘT (CHUYÊN NGHIỆP)
+   ============================================================ */
+.wuxia-floating-tooltip {
+  position: fixed;
+  display: none;
+  pointer-events: none;
+  width: 290px;
+  background: rgba(15, 23, 42, 0.98);
+  border: 2px solid #d4af37;
+  border-radius: 8px;
+  padding: 14px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.85), 0 0 20px rgba(212, 175, 55, 0.3);
+  z-index: 9999;
+  backdrop-filter: blur(8px);
+}
+
+.tt-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #334155;
+  margin-bottom: 10px;
+}
+
+.tt-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 6px;
+  border: 1px solid #d4af37;
+}
+
+.tt-name {
+  font-size: 15px;
+  font-weight: bold;
+}
+
+.tt-rarity {
+  font-size: 11px;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+
+.rarity-celestial .tt-name { color: #f59e0b; text-shadow: 0 0 8px #d97706; }
+.rarity-celestial .tt-rarity { color: #fbbf24; }
+.rarity-epic .tt-name { color: #c084fc; text-shadow: 0 0 8px #9333ea; }
+.rarity-epic .tt-rarity { color: #a855f7; }
+.rarity-rare .tt-name { color: #38bdf8; }
+.rarity-rare .tt-rarity { color: #0284c7; }
+.rarity-common .tt-name { color: #e2e8f0; }
+.rarity-common .tt-rarity { color: #94a3b8; }
+
+.tt-stats-box {
+  margin-bottom: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.tt-stat {
+  font-size: 13px;
+  color: #4ade80;
+  font-weight: 500;
+}
+.tt-stat.heal-stat { color: #f87171; }
+.tt-stat.mana-stat { color: #60a5fa; }
+.tt-stat.realm-stat { color: #facc15; }
+
+.tt-desc {
+  font-size: 12px;
+  color: #94a3b8;
+  line-height: 1.45;
+  margin-bottom: 8px;
+  font-style: italic;
+}
+
+.tt-instruction {
+  font-size: 10px;
+  color: #64748b;
+  border-top: 1px dashed #334155;
+  padding-top: 6px;
+}
+
+/* ============================================================
+   CÁC CỬA SỔ MODAL (NHÂN VẬT, TÚI 200 Ô, KỸ NĂNG, BẢN ĐỒ)
+   ============================================================ */
+.wuxia-modal {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.9);
+  background: rgba(15, 23, 42, 0.97);
+  border: 2px solid #d4af37;
+  border-radius: 12px;
+  box-shadow: 0 0 45px rgba(0, 0, 0, 0.85);
+  display: none;
+  flex-direction: column;
+  z-index: 60;
+  backdrop-filter: blur(10px);
+  opacity: 0;
+  transition: all 0.25s ease;
+}
+.wuxia-modal.active {
+  display: flex;
+  transform: translate(-50%, -50%) scale(1);
+  opacity: 1;
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 20px;
+  border-bottom: 1.5px solid #d4af37;
+  background: rgba(30, 41, 59, 0.7);
+}
+.modal-header h3 {
+  font-family: 'Cinzel', serif;
+  font-size: 18px;
+  color: #facc15;
+}
+
+.btn-close-modal {
+  background: none;
+  border: none;
+  color: #94a3b8;
+  font-size: 20px;
+  cursor: pointer;
+}
+.btn-close-modal:hover { color: #f87171; }
+
+.modal-body { padding: 20px; }
+
+/* MODAL 1: THUỘC TÍNH TỰ THÂN (CHARACTER SHEET) */
+.modal-character-body {
+  width: 680px;
+  display: flex;
+  gap: 25px;
+}
+
+.char-left-col {
+  width: 280px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  border-right: 1px solid #334155;
+  padding-right: 20px;
+}
+
+.stat-points-banner {
+  background: rgba(234, 179, 8, 0.15);
+  border: 1px solid #eab308;
+  border-radius: 6px;
+  padding: 8px 12px;
+  color: #facc15;
+  font-weight: bold;
+  font-size: 13px;
+  text-align: center;
+}
+
+.stat-alloc-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(30, 41, 59, 0.8);
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid #475569;
+}
+
+.stat-label-box {
+  display: flex;
+  flex-direction: column;
+}
+.stat-name-main { font-size: 14px; font-weight: bold; color: #f8fafc; }
+.stat-name-sub { font-size: 11px; color: #94a3b8; }
+.stat-value-main { font-size: 16px; font-weight: bold; color: #38bdf8; margin: 0 10px; }
+
+.btn-add-stat {
+  padding: 4px 10px;
+  background: #d4af37;
+  color: #0f172a;
+  border: none;
+  border-radius: 4px;
+  font-weight: bold;
+  cursor: pointer;
+}
+.btn-add-stat:hover { background: #facc15; }
+.btn-add-stat:disabled { opacity: 0.3; cursor: not-allowed; }
+
+.btn-reset-stats {
+  padding: 8px;
+  background: #334155;
+  color: #cbd5e1;
+  border: 1px solid #64748b;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+}
+.btn-reset-stats:hover { background: #ef4444; color: #fff; }
+
+.char-right-col {
+  flex: 1;
+}
+
+.char-detail-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+.char-detail-table td {
+  padding: 8px 10px;
+  border-bottom: 1px solid #334155;
+}
+.char-detail-table td.val-col {
+  text-align: right;
+  font-weight: bold;
+  color: #facc15;
+}
+
+/* MODAL 2: TÚI ĐỒ 200 Ô HÀNH TRANG */
+.modal-inventory-body-200 {
+  width: 820px;
+  max-width: 95vw;
+}
+
+.inv-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.inv-tabs-list {
+  display: flex;
+  gap: 8px;
+}
+
+.inv-tab-btn {
+  padding: 6px 14px;
+  background: #1e293b;
+  border: 1px solid #475569;
+  border-radius: 6px;
+  color: #cbd5e1;
+  font-size: 12px;
+  cursor: pointer;
+}
+.inv-tab-btn.active {
+  background: #d4af37;
+  color: #0f172a;
+  font-weight: bold;
+  border-color: #facc15;
+}
+
+.btn-sort-inv {
+  padding: 6px 14px;
+  background: #0284c7;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.btn-sort-inv:hover {
+  background: #0369a1;
+}
+
+.btn-sell-junk {
+  padding: 6px 14px;
+  background: #dc2626;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.btn-sell-junk:hover {
+  background: #b91c1c;
+  box-shadow: 0 0 10px rgba(220, 38, 38, 0.4);
+}
+
+/* Thanh Tùy Chọn Bán Nhanh Theo Phẩm Cấp */
+.inv-rarity-sell-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid rgba(212, 175, 55, 0.35);
+  border-radius: 6px;
+  padding: 6px 12px;
+  margin-bottom: 12px;
+  gap: 10px;
+}
+
+.rarity-checkbox-group {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.rarity-chk-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11.5px;
+  font-weight: 500;
+  cursor: pointer;
+  user-select: none;
+  transition: opacity 0.2s;
+}
+.rarity-chk-label:hover {
+  opacity: 0.85;
+}
+.rarity-chk-label input[type="checkbox"] {
+  accent-color: #d4af37;
+  cursor: pointer;
+}
+
+.dot-rarity {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+.dot-white { background: #e2e8f0; box-shadow: 0 0 4px #e2e8f0; }
+.dot-green { background: #4ade80; box-shadow: 0 0 4px #4ade80; }
+.dot-blue { background: #38bdf8; box-shadow: 0 0 4px #38bdf8; }
+.dot-purple { background: #c084fc; box-shadow: 0 0 4px #c084fc; }
+.dot-gold { background: #facc15; box-shadow: 0 0 4px #facc15; }
+.dot-orange { background: #f97316; box-shadow: 0 0 4px #f97316; }
+.dot-red { background: #ef4444; box-shadow: 0 0 4px #ef4444; }
+.dot-black { background: #64748b; box-shadow: 0 0 4px #64748b; }
+.dot-plat { background: #e0f2fe; box-shadow: 0 0 6px #38bdf8; }
+
+.rarity-white { color: #cbd5e1; }
+.rarity-green { color: #4ade80; }
+.rarity-blue { color: #38bdf8; }
+.rarity-purple { color: #c084fc; }
+.rarity-gold { color: #facc15; }
+.rarity-orange { color: #fb923c; }
+.rarity-red { color: #f87171; }
+.rarity-black { color: #94a3b8; }
+.rarity-plat { color: #38bdf8; font-weight: bold; }
+
+.btn-sell-selected-rarity {
+  padding: 5px 12px;
+  background: linear-gradient(135deg, #d97706, #b45309);
+  color: #fff;
+  border: 1px solid #f59e0b;
+  border-radius: 6px;
+  font-size: 11.5px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+.btn-sell-selected-rarity:hover {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  box-shadow: 0 0 10px rgba(245, 158, 11, 0.5);
+  transform: translateY(-1px);
+}
+
+.btn-action-wuxia.btn-sell {
+  background: linear-gradient(135deg, #16a34a, #15803d);
+  color: #fff;
+  border: 1px solid #22c55e;
+}
+.btn-action-wuxia.btn-sell:hover {
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  box-shadow: 0 0 12px rgba(34, 197, 94, 0.5);
+}
+
+.inv-content-split {
+  display: flex;
+  gap: 20px;
+}
+
+.inv-equipped-column {
+  width: 140px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
+}
+
+.inv-grid-scroll-box {
+  flex: 1;
+  max-height: 420px;
+  overflow-y: auto;
+  padding-right: 8px;
+}
+
+.inv-grid-200 {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 8px;
+}
+
+.inv-cell-200 {
+  width: 52px;
+  height: 52px;
+  background: #1e293b;
+  border: 1px solid #475569;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.inv-cell-200:hover {
+  border-color: #facc15;
+  transform: scale(1.06);
+}
+
+.item-icon-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 5px;
+}
+.rarity-border-celestial { border: 1.5px solid #f59e0b; }
+.rarity-border-epic { border: 1.5px solid #a855f7; }
+.rarity-border-rare { border: 1.5px solid #38bdf8; }
+
+.item-count-badge {
+  position: absolute;
+  bottom: 2px;
+  right: 3px;
+  background: rgba(0, 0, 0, 0.85);
+  color: #fff;
+  font-size: 10px;
+  font-weight: bold;
+  padding: 1px 4px;
+  border-radius: 3px;
+}
+
+/* MODAL 3: BẢNG KỸ NĂNG VÕ HỌC (SKILL TREE) */
+.modal-skilltree-body {
+  width: 620px;
+}
+
+.skill-tree-top {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #334155;
+  color: #facc15;
+  font-weight: bold;
+}
+
+.skill-tree-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-height: 420px;
+  overflow-y: auto;
+}
+
+.skill-card-row {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  background: rgba(30, 41, 59, 0.8);
+  border: 1px solid #475569;
+  border-radius: 8px;
+  padding: 12px;
+}
+
+.skill-tree-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 8px;
+  border: 1.5px solid #d4af37;
+}
+
+.skill-tree-info {
+  flex: 1;
+}
+.skill-tree-info h5 {
+  font-size: 15px;
+  color: #f8fafc;
+  margin-bottom: 4px;
+}
+.skill-level-text {
+  font-size: 12px;
+  color: #38bdf8;
+  margin-left: 8px;
+}
+.skill-tree-info p {
+  font-size: 12px;
+  color: #94a3b8;
+  line-height: 1.4;
+}
+
+.btn-upgrade-skill {
+  padding: 8px 16px;
+  background: #d4af37;
+  color: #0f172a;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  font-size: 12px;
+  cursor: pointer;
+}
+.btn-upgrade-skill:hover { background: #facc15; }
+.btn-upgrade-skill.disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* MODAL 4: BẢN ĐỒ THẾ GIỚI (WORLD MAP) */
+.modal-worldmap-body {
+  width: 720px;
+}
+
+.world-map-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.map-select-card {
+  display: flex;
+  gap: 16px;
+  background: rgba(30, 41, 59, 0.8);
+  border: 2px solid #475569;
+  border-radius: 8px;
+  padding: 12px;
+  align-items: center;
+}
+.map-select-card.active-map {
+  border-color: #38bdf8;
+  box-shadow: 0 0 15px rgba(56, 189, 248, 0.3);
+}
+
+.map-select-img {
+  width: 180px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1.5px solid #d4af37;
+}
+
+.map-select-info {
+  flex: 1;
+}
+.map-select-info h4 {
+  font-size: 16px;
+  color: #fde047;
+  margin-bottom: 6px;
+}
+.current-map-tag { color: #38bdf8; font-size: 12px; margin-left: 6px; }
+.map-select-info p {
+  font-size: 12px;
+  color: #cbd5e1;
+  line-height: 1.4;
+  margin-bottom: 10px;
+}
+
+.btn-teleport-map {
+  padding: 6px 18px;
+  background: linear-gradient(135deg, #38bdf8, #0284c7);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: bold;
+  cursor: pointer;
+}
+.btn-teleport-map:hover { filter: brightness(1.2); }
+
+/* Modal Tử Trận */
+#modal-death {
+  text-align: center;
+  padding: 40px 50px;
+  width: 440px;
+}
+#modal-death h2 {
+  font-family: 'Cinzel', serif;
+  font-size: 32px;
+  color: #ef4444;
+  margin-bottom: 10px;
+}
+.btn-respawn {
+  padding: 12px 35px;
+  font-size: 16px;
+  font-weight: bold;
+  background: linear-gradient(135deg, #ef4444, #991b1b);
+  border: 1.5px solid #f87171;
+  border-radius: 8px;
+  color: #fff;
+  cursor: pointer;
+}
+
+/* ============================================================
+   8 VỊ TRÍ TRANG BỊ & LƯỚI 200 Ô HÀNH TRANG
+   ============================================================ */
+.equipped-slots-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 54px);
+  gap: 8px;
+  justify-content: center;
+  margin-top: 6px;
+}
+
+.inv-equipped-column {
+  background: rgba(15, 23, 42, 0.7);
+  border: 1.5px solid #475569;
+  border-radius: 8px;
+  padding: 10px;
+  width: 140px;
+}
+
+/* ============================================================
+   9 CẤP BẬC PHẨM CẤP TRANG BỊ & HIỆU ỨNG BẠCH KIM CHỚP NHÁY
+   ============================================================ */
+/* 1. Phổ Thông (Trắng) */
+.rarity-common, .rarity-border-common { border-color: #cbd5e1 !important; color: #f8fafc; }
+/* 2. Ưu Tú (Lục) */
+.rarity-uncommon, .rarity-border-uncommon { border-color: #22c55e !important; color: #4ade80; }
+/* 3. Hiếm (Lam) */
+.rarity-rare, .rarity-border-rare { border-color: #38bdf8 !important; color: #7dd3fc; }
+/* 4. Sử Thi (Tím) */
+.rarity-epic, .rarity-border-epic { border-color: #a855f7 !important; color: #c084fc; }
+/* 5. Hoàng Kim (Vàng) */
+.rarity-legendary, .rarity-border-legendary { border-color: #eab308 !important; color: #fde047; }
+/* 6. Truyền Thuyết (Cam) */
+.rarity-mythic, .rarity-border-mythic { border-color: #f97316 !important; color: #fb923c; }
+/* 7. Thần Thoại (Đỏ) */
+.rarity-celestial, .rarity-border-celestial { border-color: #ef4444 !important; color: #f87171; }
+/* 8. Ma Thần (Đen Ám Quang Viền Tím) */
+.rarity-abyssal, .rarity-border-abyssal {
+  border-color: #8b5cf6 !important;
+  color: #c084fc;
+  box-shadow: 0 0 10px rgba(139, 92, 246, 0.5);
+  background: radial-gradient(circle, #2e1065 0%, #0f172a 100%);
+}
+
+/* 9. BẠCH KIM CHÍ TÔN (CHỚP NHÁY CẦU VỒNG SHIMMERING RAINBOW) */
+@keyframes shimmerPlatinumRainbow {
+  0% {
+    border-color: #ff3b30;
+    box-shadow: 0 0 12px rgba(255, 59, 48, 0.8), inset 0 0 8px rgba(255, 255, 255, 0.6);
+  }
+  20% {
+    border-color: #ff9500;
+    box-shadow: 0 0 12px rgba(255, 149, 0, 0.8), inset 0 0 8px rgba(255, 255, 255, 0.6);
+  }
+  40% {
+    border-color: #ffcc00;
+    box-shadow: 0 0 12px rgba(255, 204, 0, 0.8), inset 0 0 8px rgba(255, 255, 255, 0.6);
+  }
+  60% {
+    border-color: #34c759;
+    box-shadow: 0 0 12px rgba(52, 199, 89, 0.8), inset 0 0 8px rgba(255, 255, 255, 0.6);
+  }
+  80% {
+    border-color: #007aff;
+    box-shadow: 0 0 12px rgba(0, 122, 255, 0.8), inset 0 0 8px rgba(255, 255, 255, 0.6);
+  }
+  100% {
+    border-color: #af52de;
+    box-shadow: 0 0 12px rgba(175, 82, 222, 0.8), inset 0 0 8px rgba(255, 255, 255, 0.6);
+  }
+}
+
+@keyframes textRainbow {
+  0% { color: #f87171; text-shadow: 0 0 8px #f87171; }
+  25% { color: #fbbf24; text-shadow: 0 0 8px #fbbf24; }
+  50% { color: #34d399; text-shadow: 0 0 8px #34d399; }
+  75% { color: #38bdf8; text-shadow: 0 0 8px #38bdf8; }
+  100% { color: #c084fc; text-shadow: 0 0 8px #c084fc; }
+}
+
+.rarity-platinum, .rarity-border-platinum {
+  animation: shimmerPlatinumRainbow 2.4s infinite alternate !important;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.25) 0%, rgba(15, 23, 42, 0.9) 100%) !important;
+}
+
+.text-platinum, .tt-name.is-platinum {
+  animation: textRainbow 2.4s infinite alternate !important;
+  font-weight: bold;
+}
+
+/* ============================================================
+   TOOLTIP KIẾM HIỆP CHUẨN 9 CẤP BẬC
+   ============================================================ */
+.wuxia-floating-tooltip {
+  position: fixed;
+  display: none;
+  z-index: 99999;
+  width: 315px;
+  max-height: 88vh;
+  overflow-y: auto;
+  background: rgba(10, 15, 30, 0.96);
+  border: 1.8px solid #d4af37;
+  border-radius: 8px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.9), 0 0 20px rgba(212, 175, 55, 0.35);
+  padding: 12px 14px;
+  pointer-events: none;
+  font-family: 'Noto Sans', sans-serif;
+  backdrop-filter: blur(10px);
+}
+
+.tt-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 1.5px solid rgba(212, 175, 55, 0.35);
+  padding-bottom: 8px;
+  margin-bottom: 8px;
+}
+
+.tt-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 6px;
+  border: 1.5px solid #d4af37;
+  background: #1e293b;
+  object-fit: contain;
+}
+
+.tt-name {
+  font-size: 14px;
+  font-weight: bold;
+  font-family: 'Noto Serif', serif;
+  color: #fff;
+}
+
+.tt-rarity {
+  font-size: 11px;
+  font-weight: 600;
+  margin-top: 2px;
+}
+
+.tt-stats-box {
+  margin: 6px 0;
+  padding: 6px 8px;
+  background: rgba(30, 41, 59, 0.6);
+  border-radius: 5px;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.tt-stat {
+  color: #93c5fd;
+}
+.tt-affix-stat {
+  color: #34d399;
+}
+.tt-stat.heal-stat { color: #4ade80; font-weight: bold; }
+.tt-stat.mana-stat { color: #38bdf8; font-weight: bold; }
+.tt-stat.realm-stat { color: #facc15; font-weight: bold; }
+
+.tt-sockets-box {
+  margin-top: 6px;
+  padding: 5px 8px;
+  background: rgba(15, 23, 42, 0.7);
+  border-radius: 4px;
+  border: 1px dashed rgba(56, 189, 248, 0.3);
+}
+.tt-socket-item {
+  font-size: 11px;
+  color: #64748b;
+  margin: 2px 0;
+}
+.tt-socket-item.gemmed {
+  color: #38bdf8;
+  font-weight: 600;
+  text-shadow: 0 0 5px rgba(56, 189, 248, 0.4);
+}
+
+.tt-set-box {
+  margin-top: 8px;
+  padding: 6px 8px;
+  background: rgba(20, 30, 50, 0.85);
+  border: 1px solid rgba(212, 175, 55, 0.45);
+  border-radius: 6px;
+}
+.tt-set-title {
+  font-weight: bold;
+  color: #facc15;
+  font-size: 11.5px;
+  margin-bottom: 4px;
+  text-align: center;
+}
+.tt-set-line {
+  font-size: 11px;
+  color: #64748b;
+  margin: 2px 0;
+  padding: 2px 0;
+}
+.tt-set-line.active {
+  color: #4ade80;
+  font-weight: bold;
+  text-shadow: 0 0 8px rgba(74, 222, 128, 0.7);
+}
+
+.tt-desc {
+  font-size: 11px;
+  color: #94a3b8;
+  font-style: italic;
+  line-height: 1.4;
+  margin: 6px 0;
+}
+
+.tt-instruction {
+  font-size: 10px;
+  color: #fde047;
+  border-top: 1px dashed rgba(255, 255, 255, 0.15);
+  padding-top: 5px;
+  text-align: center;
+}
+
+/* ============================================================
+   MODAL HỘI THOẠI NPC
+   ============================================================ */
+.npc-dialogue-body {
+  padding: 20px;
+}
+
+.npc-profile-box {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 15px;
+  background: rgba(30, 41, 59, 0.6);
+  padding: 12px;
+  border-radius: 8px;
+  border: 1.5px solid #475569;
+}
+
+.npc-avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  border: 2px solid #facc15;
+  object-fit: cover;
+  background: #0f172a;
+}
+
+.npc-info-text h4 {
+  font-size: 18px;
+  color: #fde047;
+  font-family: 'Noto Serif', serif;
+  margin-bottom: 4px;
+}
+
+.npc-title-badge {
+  font-size: 11px;
+  color: #38bdf8;
+  background: rgba(56, 189, 248, 0.15);
+  padding: 2px 8px;
+  border-radius: 10px;
+  border: 1px solid rgba(56, 189, 248, 0.4);
+}
+
+.npc-speech-bubble {
+  position: relative;
+  background: rgba(15, 23, 42, 0.85);
+  border: 1.5px solid #d4af37;
+  border-radius: 8px;
+  padding: 14px 18px;
+  font-size: 13px;
+  color: #e2e8f0;
+  line-height: 1.6;
+  margin-bottom: 18px;
+  font-style: italic;
+}
+
+.npc-actions-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.btn-npc-action {
+  padding: 10px 16px;
+  font-size: 13px;
+  font-weight: bold;
+  color: #fff;
+  background: linear-gradient(135deg, #1e293b, #334155);
+  border: 1.5px solid #d4af37;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: all 0.2s ease;
+}
+
+.btn-npc-action:hover {
+  background: linear-gradient(135deg, #d4af37, #b45309);
+  color: #000;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(212, 175, 55, 0.4);
+}
+
+.btn-npc-action .action-cost {
+  color: #facc15;
+  font-size: 11px;
+}
+.btn-npc-action:hover .action-cost {
+  color: #000;
+}
+
+/* ============================================================
+   MODAL CƯỜNG HÓA THẦN BINH
+   ============================================================ */
+.enhance-body {
+  padding: 20px;
+}
+
+.enhance-item-preview {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  background: rgba(30, 41, 59, 0.7);
+  padding: 14px;
+  border-radius: 8px;
+  border: 1.5px solid #d4af37;
+  margin-bottom: 15px;
+}
+
+.enhance-icon {
+  width: 60px;
+  height: 60px;
+  border-radius: 8px;
+  border: 2px solid #facc15;
+  background: #0f172a;
+}
+
+.enhance-control-box {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 15px;
+  padding-top: 12px;
+  border-top: 1px solid #475569;
+}
+
+.btn-do-enhance {
+  padding: 10px 22px;
+  font-size: 14px;
+  font-weight: bold;
+  background: linear-gradient(135deg, #eab308, #ca8a04);
+  color: #000;
+  border: 1.5px solid #fde047;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-do-enhance:hover {
+  filter: brightness(1.2);
+  transform: translateY(-2px);
+  box-shadow: 0 0 15px rgba(250, 204, 21, 0.6);
+}
+
+/* ============================================================
+   MODAL 10: THIÊN MỆNH CHI LUÂN (LUCKY WHEEL) - STUDIO QUALITY
+   ============================================================ */
+.btn-dock-wheel {
+  position: relative;
+  border-color: #facc15 !important;
+  background: radial-gradient(circle, rgba(234, 179, 8, 0.3) 0%, rgba(15, 23, 42, 0.9) 100%) !important;
+  animation: pulseWheelBtn 2s infinite ease-in-out;
+}
+
+@keyframes pulseWheelBtn {
+  0%, 100% { box-shadow: 0 0 8px rgba(250, 204, 21, 0.4); transform: scale(1); }
+  50% { box-shadow: 0 0 20px rgba(250, 204, 21, 0.85); transform: scale(1.08); }
+}
+
+.dock-badge-spin {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  background: #ef4444;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 900;
+  padding: 1px 5px;
+  border-radius: 10px;
+  border: 1px solid #fee2e2;
+  box-shadow: 0 0 8px rgba(239, 68, 68, 0.8);
+}
+
+.modal-wheel-container {
+  width: 860px;
+  max-width: 96vw;
+  background: radial-gradient(ellipse at center, rgba(30, 41, 59, 0.96) 0%, rgba(15, 23, 42, 0.98) 100%);
+  border: 2px solid #d4af37;
+  box-shadow: 0 0 45px rgba(212, 175, 55, 0.45);
+}
+
+.wheel-body {
+  display: flex;
+  gap: 25px;
+  align-items: center;
+  padding: 20px 25px;
+}
+
+.wheel-left-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+}
+
+.wheel-stage {
+  position: relative;
+  width: 420px;
+  height: 420px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  box-shadow: 0 0 40px rgba(0, 0, 0, 0.8), inset 0 0 20px rgba(250, 204, 21, 0.3);
+}
+
+/* Vòng hào quang thiên giới xoay chậm ngược chiều tạo chiều sâu */
+.wheel-celestial-halo {
+  position: absolute;
+  width: 440px;
+  height: 440px;
+  border-radius: 50%;
+  border: 2px dashed rgba(250, 204, 21, 0.4);
+  box-shadow: 0 0 25px rgba(56, 189, 248, 0.35);
+  animation: rotateHalo 30s linear infinite reverse;
+  pointer-events: none;
+}
+
+@keyframes rotateHalo {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Đĩa quay chính */
+.wheel-disc-wrapper {
+  position: relative;
+  width: 410px;
+  height: 410px;
+  border-radius: 50%;
+  overflow: hidden;
+  box-shadow: 0 0 25px rgba(250, 204, 21, 0.5);
+  transition: transform 5.5s cubic-bezier(0.12, 0.82, 0.28, 1.01);
+  will-change: transform;
+}
+
+.wheel-disc-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Kim chỉ thiên mệnh ở đỉnh 12 giờ */
+.wheel-pointer {
+  position: absolute;
+  top: -16px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 25;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  pointer-events: none;
+  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.8));
+}
+
+.pointer-needle {
+  width: 0;
+  height: 0;
+  border-left: 14px solid transparent;
+  border-right: 14px solid transparent;
+  border-top: 36px solid #facc15;
+  filter: drop-shadow(0 0 8px #f59e0b);
+}
+
+.pointer-gem {
+  width: 22px;
+  height: 22px;
+  background: radial-gradient(circle, #38bdf8 20%, #0284c7 80%);
+  border: 2px solid #fde047;
+  border-radius: 50%;
+  margin-top: -38px;
+  box-shadow: 0 0 12px #38bdf8;
+}
+
+/* Rung lắc kim khi quay */
+.pointer-flutter {
+  animation: needleTick 0.12s infinite alternate ease-in-out;
+}
+
+@keyframes needleTick {
+  0% { transform: translateX(-50%) rotate(0deg); }
+  100% { transform: translateX(-50%) rotate(-12deg); }
+}
+
+/* Nút bấm Khai Luân ở tâm */
+.wheel-center-btn {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #eab308 0%, #ca8a04 60%, #854d0e 100%);
+  border: 3.5px solid #fef08a;
+  color: #0f172a;
+  box-shadow: 0 0 25px rgba(250, 204, 21, 0.8), inset 0 2px 5px rgba(255, 255, 255, 0.6);
+  z-index: 20;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.wheel-center-btn:hover:not(:disabled) {
+  transform: translate(-50%, -50%) scale(1.08);
+  box-shadow: 0 0 35px rgba(250, 204, 21, 1);
+  filter: brightness(1.15);
+}
+
+.wheel-center-btn:disabled {
+  filter: grayscale(0.8);
+  cursor: not-allowed;
+}
+
+.spin-btn-title {
+  font-family: 'Cinzel', serif;
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: 1px;
+}
+
+.spin-btn-sub {
+  font-size: 10px;
+  font-weight: bold;
+  background: #dc2626;
+  color: #fff;
+  padding: 1px 6px;
+  border-radius: 8px;
+  margin-top: 2px;
+}
+
+.wheel-status-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 8px 16px;
+  background: rgba(30, 41, 59, 0.7);
+  border: 1px solid #475569;
+  border-radius: 8px;
+  color: #e2e8f0;
+}
+
+/* Cột danh sách 10 phần thưởng bên phải */
+.wheel-right-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.wheel-rewards-title {
+  font-family: 'Cinzel', serif;
+  font-size: 15px;
+  font-weight: bold;
+  color: #facc15;
+  text-align: center;
+  letter-spacing: 1px;
+  border-bottom: 1px solid rgba(212, 175, 55, 0.4);
+  padding-bottom: 6px;
+}
+
+.wheel-rewards-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 290px;
+  overflow-y: auto;
+  padding-right: 6px;
+}
+
+.wheel-reward-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 10px;
+  background: rgba(30, 41, 59, 0.65);
+  border: 1px solid #334155;
+  border-radius: 6px;
+  font-size: 12px;
+  color: #cbd5e1;
+  transition: all 0.2s;
+}
+
+.wheel-reward-item .rew-idx {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #475569;
+  color: #fff;
+  font-size: 10px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.wheel-reward-item.item-plat {
+  border-color: #38bdf8;
+  background: linear-gradient(90deg, rgba(56, 189, 248, 0.15), rgba(168, 85, 247, 0.15));
+  color: #fff;
+  font-weight: bold;
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.3);
+}
+.wheel-reward-item.item-plat .rew-idx { background: #38bdf8; color: #000; }
+
+.wheel-reward-item.item-gold {
+  border-color: #eab308;
+  color: #facc15;
+  font-weight: bold;
+}
+.wheel-reward-item.item-gold .rew-idx { background: #eab308; color: #000; }
+
+.wheel-reward-item.item-legend {
+  border-color: #f97316;
+  color: #fdba74;
+}
+
+/* Khung chúc mừng trúng thưởng */
+.wheel-winner-announcement {
+  background: radial-gradient(ellipse at center, rgba(234, 179, 8, 0.25) 0%, rgba(30, 41, 59, 0.85) 100%);
+  border: 1.5px solid #facc15;
+  border-radius: 8px;
+  padding: 12px;
+  text-align: center;
+  animation: winnerPop 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+}
+
+@keyframes winnerPop {
+  0% { transform: scale(0.85); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.winner-title {
+  font-size: 12px;
+  font-weight: bold;
+  color: #facc15;
+  margin-bottom: 4px;
+}
+
+.winner-item-name {
+  font-size: 15px;
+  font-weight: 900;
+  color: #38bdf8;
+  margin-bottom: 4px;
+  text-shadow: 0 0 10px rgba(56, 189, 248, 0.6);
+}
+
+.winner-item-desc {
+  font-size: 11px;
+  color: #cbd5e1;
+}
+
+/* ============================================================
+   BỔ SUNG CSS MÔN PHÁI: THIẾU LÂM & VÕ ĐANG
+   ============================================================ */
+.sect-card[data-sect="shaolin"]:hover,
+.sect-card[data-sect="shaolin"].selected {
+  border-color: #f59e0b;
+  box-shadow: 0 0 20px rgba(245, 158, 11, 0.4);
+}
+.badge-sect.sect-shaolin {
+  background: rgba(245, 158, 11, 0.2);
+  border: 1px solid #f59e0b;
+  color: #fbbf24;
+}
+
+.sect-card[data-sect="wudang"]:hover,
+.sect-card[data-sect="wudang"].selected {
+  border-color: #38bdf8;
+  box-shadow: 0 0 20px rgba(56, 189, 248, 0.4);
+}
+.badge-sect.sect-wudang {
+  background: rgba(56, 189, 248, 0.2);
+  border: 1px solid #38bdf8;
+  color: #7dd3fc;
+}
+
+/* ============================================================
+   LÒ RÈN THIẾT NGƯU (FORGE MODAL)
+   ============================================================ */
+.forge-tabs {
+  display: flex;
+  gap: 8px;
+  border-bottom: 2px solid #334155;
+  padding-bottom: 8px;
+  margin-bottom: 15px;
+}
+
+.forge-tab-btn {
+  flex: 1;
+  padding: 10px 12px;
+  background: #1e293b;
+  border: 1.5px solid #475569;
+  border-radius: 6px;
+  color: #cbd5e1;
+  font-size: 13px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: 'Noto Serif', serif;
+}
+
+.forge-tab-btn:hover {
+  background: #334155;
+  border-color: #94a3b8;
+  color: #fff;
+}
+
+.forge-tab-btn.active {
+  background: linear-gradient(135deg, #854d0e, #b45309);
+  border-color: #facc15;
+  color: #fef08a;
+  box-shadow: 0 0 10px rgba(250, 204, 21, 0.35);
+}
+
+.forge-layout-split {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 15px;
+}
+
+.forge-item-selector {
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid #334155;
+  border-radius: 8px;
+  padding: 12px;
+}
+
+.forge-section-title {
+  font-size: 13px;
+  font-weight: bold;
+  color: #facc15;
+  margin-bottom: 10px;
+  border-bottom: 1px dashed rgba(250, 204, 21, 0.3);
+  padding-bottom: 4px;
+}
+
+.forge-equips-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  max-height: 380px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.forge-equip-slot {
+  width: 52px;
+  height: 52px;
+  border-radius: 6px;
+  background: #1e293b;
+  border: 1.5px solid #475569;
+  position: relative;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.forge-equip-slot:hover {
+  transform: scale(1.05);
+  border-color: #facc15;
+  box-shadow: 0 0 8px rgba(250, 204, 21, 0.4);
+}
+
+.forge-equip-slot.selected {
+  border-color: #38bdf8;
+  box-shadow: 0 0 12px rgba(56, 189, 248, 0.6);
+  background: rgba(56, 189, 248, 0.15);
+}
+
+.forge-equip-slot img {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+}
+
+.forge-equip-slot .enhance-badge {
+  position: absolute;
+  top: 1px;
+  right: 2px;
+  font-size: 10px;
+  font-weight: bold;
+  color: #facc15;
+  background: rgba(0, 0, 0, 0.75);
+  padding: 1px 3px;
+  border-radius: 3px;
+}
+
+/* Chi tiết panel thao tác */
+.forge-detail-panel {
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid #334155;
+  border-radius: 8px;
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.forge-target-card {
+  background: rgba(30, 41, 59, 0.6);
+  border: 1px solid #475569;
+  border-radius: 8px;
+  padding: 12px;
+  min-height: 100px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 12px;
+}
+
+.forge-target-card .card-item-view {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  width: 100%;
+}
+
+.forge-target-card .card-item-img {
+  width: 60px;
+  height: 60px;
+  border-radius: 6px;
+  border: 2px solid #facc15;
+  background: #0f172a;
+}
+
+.forge-target-card .card-item-meta {
+  flex: 1;
+}
+
+.forge-placeholder-text {
+  font-size: 13px;
+  color: #94a3b8;
+  font-style: italic;
+  text-align: center;
+}
+
+.forge-rates-box {
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid #334155;
+  border-radius: 6px;
+  padding: 10px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 15px;
+  font-size: 13px;
+}
+
+.rate-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.rate-val {
+  color: #4ade80;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.cost-val {
+  color: #facc15;
+  font-weight: bold;
+}
+
+.rate-warning {
+  font-size: 11px;
+  color: #ef4444;
+  font-weight: bold;
+  padding: 4px 6px;
+  background: rgba(239, 68, 68, 0.1);
+  border-radius: 4px;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.protect-charm-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12px;
+  color: #cbd5e1;
+  background: rgba(30, 41, 59, 0.7);
+  padding: 6px 10px;
+  border-radius: 4px;
+  border: 1px solid #475569;
+}
+
+.protect-charm-toggle label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+}
+
+.charm-count {
+  font-size: 11px;
+  color: #38bdf8;
+  font-weight: bold;
+}
+
+.btn-do-forge {
+  width: 100%;
+  padding: 12px;
+  font-size: 14px;
+  font-weight: bold;
+  color: #000;
+  background: linear-gradient(135deg, #facc15, #ca8a04);
+  border: 1px solid #fde047;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 4px 15px rgba(234, 179, 8, 0.3);
+}
+
+.btn-do-forge:hover:not(:disabled) {
+  background: linear-gradient(135deg, #fde047, #eab308);
+  box-shadow: 0 0 20px rgba(250, 204, 21, 0.6);
+  transform: translateY(-1px);
+}
+
+.btn-do-forge:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  filter: grayscale(1);
+}
+
+/* Tab 2: Sockets Lỗ khảm */
+.socket-slots-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.socket-slot-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(30, 41, 59, 0.7);
+  border: 1px solid #475569;
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 12px;
+}
+
+.socket-slot-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.socket-icon-frame {
+  width: 36px;
+  height: 36px;
+  border-radius: 4px;
+  border: 1.5px dashed #64748b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #0f172a;
+}
+
+.socket-icon-frame.active {
+  border-style: solid;
+  border-color: #38bdf8;
+}
+
+.socket-icon-frame img {
+  width: 28px;
+  height: 28px;
+}
+
+.btn-socket-action {
+  padding: 4px 10px;
+  font-size: 11px;
+  border-radius: 4px;
+  border: 1px solid #64748b;
+  background: #1e293b;
+  color: #e2e8f0;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-socket-action:hover {
+  background: #334155;
+  border-color: #facc15;
+  color: #fef08a;
+}
+
+.gems-inventory-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 8px;
+  max-height: 120px;
+  overflow-y: auto;
+  padding: 6px;
+  background: rgba(15, 23, 42, 0.6);
+  border-radius: 6px;
+  border: 1px solid #334155;
+}
+
+.gem-inventory-item {
+  width: 44px;
+  height: 44px;
+  border-radius: 6px;
+  border: 1.5px solid #475569;
+  background: #1e293b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s;
+}
+
+.gem-inventory-item:hover {
+  border-color: #38bdf8;
+  transform: scale(1.08);
+}
+
+.gem-inventory-item img {
+  width: 32px;
+  height: 32px;
+}
+
+.gem-inventory-item .gem-qty {
+  position: absolute;
+  bottom: 1px;
+  right: 2px;
+  font-size: 9px;
+  color: #fff;
+  background: rgba(0,0,0,0.8);
+  padding: 0 3px;
+  border-radius: 2px;
+}
+
+/* Tab 3: Combine Gems */
+.combine-gem-wrapper {
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid #334155;
+  border-radius: 8px;
+  padding: 15px;
+}
+
+.gems-combinable-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.combine-gem-card {
+  background: rgba(30, 41, 59, 0.7);
+  border: 1px solid #475569;
+  border-radius: 6px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  text-align: center;
+}
+
+.combine-gem-preview {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.combine-gem-preview img {
+  width: 36px;
+  height: 36px;
+}
+
+.combine-gem-title {
+  font-size: 12px;
+  font-weight: bold;
+  color: #e2e8f0;
+}
+
+.combine-gem-count {
+  font-size: 11px;
+  color: #38bdf8;
+}
+
+.btn-do-combine {
+  width: 100%;
+  padding: 6px;
+  font-size: 11px;
+  font-weight: bold;
+  color: #000;
+  background: linear-gradient(135deg, #a855f7, #6366f1);
+  border: 1px solid #c084fc;
+  border-radius: 4px;
+  cursor: pointer;
+  color: #fff;
+  transition: all 0.2s;
+}
+
+.btn-do-combine:hover {
+  background: linear-gradient(135deg, #c084fc, #818cf8);
+  box-shadow: 0 0 10px rgba(168, 85, 247, 0.5);
+}
+
+/* ============================================================
+   TOOLTIP: CHƯA GIÁM ĐỊNH, NGỌC KHẢM, SET BONUSES
+   ============================================================ */
+.tt-unidentified-banner {
+  background: rgba(220, 38, 38, 0.2);
+  border: 1px solid #ef4444;
+  color: #fca5a5;
+  font-size: 11px;
+  font-weight: bold;
+  padding: 4px 6px;
+  border-radius: 4px;
+  margin: 6px 0;
+  text-align: center;
+  animation: pulseUnidentified 1.5s infinite;
+}
+
+@keyframes pulseUnidentified {
+  0%, 100% { border-color: #ef4444; box-shadow: 0 0 5px rgba(239, 68, 68, 0.4); }
+  50% { border-color: #f87171; box-shadow: 0 0 12px rgba(239, 68, 68, 0.8); }
+}
+
+.tt-sockets-box {
+  margin: 6px 0;
+  padding: 6px 8px;
+  background: rgba(15, 23, 42, 0.8);
+  border-radius: 4px;
+  border: 1px solid #334155;
+  font-size: 11px;
+}
+
+.tt-socket-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 3px;
+  color: #94a3b8;
+}
+
+.tt-socket-item.gemmed {
+  color: #38bdf8;
+  font-weight: 600;
+}
+
+.tt-set-box {
+  margin: 6px 0;
+  padding: 6px 8px;
+  background: rgba(20, 20, 40, 0.85);
+  border-radius: 4px;
+  border: 1px solid #854d0e;
+  font-size: 11px;
+}
+
+.tt-set-title {
+  color: #fbbf24;
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+
+.tt-set-line {
+  color: #64748b;
+  margin-bottom: 2px;
+}
+
+.tt-set-line.active {
+  color: #fde047;
+  font-weight: bold;
+  text-shadow: 0 0 6px rgba(250, 204, 21, 0.5);
+}
+
+/* ============================================================
+   HỆ THỐNG 12 ĐẠI DANH HIỆU VÕ LÂM (MODAL TITLES)
+   ============================================================ */
+.modal-titles-container {
+  width: 760px;
+  max-width: 95vw;
+}
+
+.modal-titles-body {
+  max-height: 75vh;
+  overflow-y: auto;
+  padding: 16px;
+}
+
+.titles-header-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid rgba(212, 175, 55, 0.4);
+  border-radius: 8px;
+  padding: 12px 18px;
+  margin-bottom: 16px;
+}
+
+.current-title-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.active-title-badge {
+  font-family: 'Noto Serif', serif;
+  font-size: 15px;
+  font-weight: bold;
+  color: #facc15;
+  padding: 4px 12px;
+  border-radius: 6px;
+  background: rgba(234, 179, 8, 0.15);
+  border: 1px solid #eab308;
+  text-shadow: 0 0 10px rgba(234, 179, 8, 0.8);
+}
+
+.titles-note {
+  font-size: 11px;
+  color: #94a3b8;
+  font-style: italic;
+  max-width: 380px;
+  text-align: right;
+}
+
+.titles-grid-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 12px;
+}
+
+.title-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(15, 23, 42, 0.8);
+  border: 1.5px solid #334155;
+  border-radius: 8px;
+  padding: 10px 14px;
+  transition: all 0.25s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.title-card.unlocked {
+  border-color: rgba(212, 175, 55, 0.5);
+  background: rgba(20, 30, 55, 0.85);
+}
+
+.title-card.active {
+  border-color: #facc15;
+  background: rgba(45, 35, 15, 0.85);
+  box-shadow: 0 0 16px rgba(250, 204, 21, 0.35);
+}
+
+.title-badge-img {
+  width: 52px;
+  height: 52px;
+  border-radius: 8px;
+  border: 1.5px solid #64748b;
+  background: #0f172a;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.title-card.active .title-badge-img {
+  border-color: #facc15;
+  box-shadow: 0 0 12px rgba(250, 204, 21, 0.7);
+}
+
+.title-info-col {
+  flex: 1;
+}
+
+.title-name-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.title-card-name {
+  font-family: 'Noto Serif', serif;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.title-card-req {
+  font-size: 11px;
+  color: #94a3b8;
+}
+
+.title-card-stats {
+  font-size: 11px;
+  color: #38bdf8;
+  line-height: 1.4;
+  margin-bottom: 4px;
+}
+
+.title-card-desc {
+  font-size: 10px;
+  color: #64748b;
+}
+
+.btn-title-action {
+  padding: 6px 12px;
+  border-radius: 5px;
+  font-size: 12px;
+  font-weight: bold;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.btn-title-action.btn-equip {
+  background: linear-gradient(135deg, #d97706, #b45309);
+  color: #fff;
+  border: 1px solid #f59e0b;
+}
+.btn-title-action.btn-equip:hover {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  box-shadow: 0 0 10px rgba(245, 158, 11, 0.6);
+}
+
+.btn-title-action.btn-active {
+  background: rgba(34, 197, 94, 0.2);
+  color: #4ade80;
+  border: 1px solid #22c55e;
+  cursor: default;
+}
+
+.btn-title-action.btn-locked {
+  background: #1e293b;
+  color: #64748b;
+  border: 1px solid #334155;
+  cursor: not-allowed;
+}
+
+/* ============================================================
+   TOP 1 - 10 RANK TITLES & SOCKET UI ENHANCEMENTS
+   ============================================================ */
+.title-card-rank {
+  border-width: 2px !important;
+  position: relative;
+  overflow: hidden;
+}
+
+.title-card-rank::before {
+  content: '';
+  position: absolute;
+  top: 0; left: -100%; width: 100%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
+  animation: rankCardShimmer 3.5s infinite;
+}
+
+@keyframes rankCardShimmer {
+  0% { left: -100%; }
+  50% { left: 100%; }
+  100% { left: 100%; }
+}
+
+.title-card-rank.rank-1 {
+  border-color: #ffd700 !important;
+  box-shadow: 0 0 15px rgba(255, 215, 0, 0.4) !important;
+}
+
+.title-card-rank.rank-2 {
+  border-color: #ff3366 !important;
+  box-shadow: 0 0 15px rgba(255, 51, 102, 0.35) !important;
+}
+
+.title-card-rank.rank-3 {
+  border-color: #00f0ff !important;
+  box-shadow: 0 0 15px rgba(0, 240, 255, 0.35) !important;
+}
+
+.rank-title-label {
+  font-family: 'Noto Serif', serif;
+  letter-spacing: 0.5px;
+}
+
+.btn-remove-gem {
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid #ef4444;
+  color: #f87171;
+}
+
+.btn-remove-gem:hover {
+  background: rgba(239, 68, 68, 0.35);
+  box-shadow: 0 0 8px rgba(239, 68, 68, 0.6);
+}
+
+.btn-pick-gem {
+  background: rgba(56, 189, 248, 0.15);
+  border: 1px solid #38bdf8;
+  color: #7dd3fc;
+}
+
+.btn-pick-gem:hover {
+  background: rgba(56, 189, 248, 0.35);
+  box-shadow: 0 0 8px rgba(56, 189, 248, 0.6);
+}
+
+/* ============================================================
+   BỘ LỌC TỰ NHẶT ĐỒ (MODAL LOOT FILTER)
+   ============================================================ */
+.modal-filter-container {
+  width: 580px;
+  max-width: 95vw;
+}
+
+.modal-filter-body {
+  padding: 18px 20px;
+}
+
+.filter-group-box {
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid #334155;
+  border-radius: 8px;
+  padding: 14px 16px;
+  margin-bottom: 16px;
+}
+
+.filter-box-title {
+  font-size: 13px;
+  font-weight: bold;
+  color: #facc15;
+  margin-bottom: 12px;
+  border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+  padding-bottom: 6px;
+}
+
+.filter-radio-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px 12px;
+}
+
+.filter-radio-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.filter-check-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.filter-check-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12px;
+  color: #e2e8f0;
+  cursor: pointer;
+}
+
+.filter-btn-row {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 10px;
+}
+
+.btn-loot-filter {
+  background: rgba(30, 41, 59, 0.85);
+  border: 1px solid #38bdf8;
+  color: #38bdf8;
+  font-size: 11px;
+  font-weight: bold;
+  border-radius: 4px;
+  padding: 4px 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-left: 8px;
+}
+
+.btn-loot-filter:hover {
+  background: #0284c7;
+  color: #fff;
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.5);
+}
+
+/* ============================================================
+   AUTH & CHARACTER SELECTION CSS
+   ============================================================ */
+.auth-tabs {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-bottom: 20px;
+  border-bottom: 1.5px solid rgba(212, 175, 55, 0.3);
+  padding-bottom: 10px;
+}
+
+.auth-tab-btn {
+  background: transparent;
+  border: none;
+  font-family: 'Noto Serif', serif;
+  font-size: 15px;
+  font-weight: bold;
+  color: #94a3b8;
+  padding: 8px 24px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.25s;
+}
+
+.auth-tab-btn.active {
+  color: #facc15;
+  background: rgba(212, 175, 55, 0.15);
+  border-bottom: 2px solid #facc15;
+}
+
+.auth-form-pane {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.input-group-auth {
+  display: flex;
+  flex-direction: column;
+  width: 320px;
+  margin-bottom: 12px;
+  text-align: left;
+}
+
+.input-group-auth label {
+  font-size: 12px;
+  color: #e2e8f0;
+  margin-bottom: 4px;
+  font-weight: 600;
+}
+
+.input-group-auth input {
+  padding: 10px 14px;
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid #475569;
+  border-radius: 5px;
+  color: #f8fafc;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.input-group-auth input:focus {
+  border-color: #38bdf8;
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.35);
+}
+
+.auth-msg {
+  font-size: 13px;
+  min-height: 18px;
+  margin-top: 6px;
+  font-weight: bold;
+}
+
+.auth-msg.error { color: #f87171; }
+.auth-msg.success { color: #4ade80; }
+
+.char-select-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(212, 175, 55, 0.25);
+  margin-bottom: 15px;
+}
+
+.char-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 15px;
+  max-height: 380px;
+  overflow-y: auto;
+  padding: 5px;
+}
+
+.char-select-card {
+  background: rgba(15, 23, 42, 0.85);
+  border: 1.5px solid rgba(212, 175, 55, 0.35);
+  border-radius: 8px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.25s;
+  position: relative;
+}
+
+.char-select-card:hover {
+  border-color: #ffd700;
+  box-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
+  transform: translateY(-2px);
+}
+
+.char-select-card.dead {
+  border-color: #ef4444;
+  opacity: 0.65;
+  background: rgba(40, 10, 10, 0.85);
+}
+
+.btn-secondary-wuxia {
+  background: rgba(30, 41, 59, 0.85);
+  border: 1.5px solid #d4af37;
+  color: #facc15;
+  padding: 10px 24px;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-secondary-wuxia:hover {
+  background: rgba(212, 175, 55, 0.25);
+}
+
+/* ============================================================
+   TU TIÊN MODAL & THỌ NGUYÊN (LIFESPAN & CULTIVATION)
+   ============================================================ */
+.modal-cultiv-container {
+  width: 780px;
+  max-width: 95vw;
+}
+
+.modal-cultiv-body {
+  padding: 15px 20px;
+}
+
+.cultiv-nav-tabs {
+  display: flex;
+  gap: 12px;
+  border-bottom: 1.5px solid rgba(139, 92, 246, 0.3);
+  padding-bottom: 10px;
+  margin-bottom: 15px;
+}
+
+.cultiv-tab-btn {
+  background: transparent;
+  border: 1px solid #475569;
+  color: #94a3b8;
+  padding: 8px 18px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 13px;
+  transition: all 0.2s;
+}
+
+.cultiv-tab-btn.active {
+  background: linear-gradient(135deg, #7c3aed, #2563eb);
+  color: #fff;
+  border-color: #a78bfa;
+  box-shadow: 0 0 15px rgba(124, 58, 237, 0.4);
+}
+
+.cultiv-top-card {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  background: rgba(20, 15, 35, 0.75);
+  border: 1.5px solid #8b5cf6;
+  border-radius: 10px;
+  padding: 16px 20px;
+  margin-bottom: 15px;
+}
+
+.cultiv-bagua-sphere {
+  position: relative;
+  width: 72px;
+  height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bagua-ring-spin {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border: 2px dashed #a855f7;
+  border-radius: 50%;
+  animation: orbitAuraSpin 10s linear infinite;
+}
+
+.cultiv-realm-icon {
+  font-size: 34px;
+  color: #c084fc;
+  text-shadow: 0 0 12px rgba(192, 132, 252, 0.8);
+}
+
+.cultiv-realm-title {
+  font-size: 20px;
+  font-weight: bold;
+  font-family: 'Noto Serif', serif;
+  color: #ffd700;
+  text-shadow: 0 0 12px rgba(255, 215, 0, 0.5);
+}
+
+.cultiv-realm-sub {
+  font-size: 13px;
+  color: #94a3b8;
+  margin: 4px 0 8px;
+}
+
+.cultiv-cdr-stat {
+  font-size: 12px;
+  color: #cbd5e1;
+}
+
+.cultiv-stat-card {
+  border: 1px solid #475569;
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-bottom: 14px;
+  background: rgba(15, 23, 42, 0.65);
+}
+
+.cultiv-progress-bar {
+  width: 100%;
+  height: 14px;
+  background: rgba(30, 41, 59, 0.8);
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.cultiv-bar-fill {
+  height: 100%;
+  transition: width 0.4s ease;
+  border-radius: 10px;
+}
+
+.btn-breakthrough-action {
+  background: linear-gradient(135deg, #9333ea, #2563eb);
+  border: 1.5px solid #c084fc;
+  color: #fff;
+  font-family: 'Noto Serif', serif;
+  font-size: 15px;
+  font-weight: bold;
+  padding: 12px 32px;
+  border-radius: 8px;
+  cursor: pointer;
+  box-shadow: 0 0 25px rgba(147, 51, 234, 0.6);
+  transition: all 0.25s;
+}
+
+.btn-breakthrough-action:hover {
+  transform: scale(1.04);
+  box-shadow: 0 0 35px rgba(147, 51, 234, 0.9);
+}
+
+.cultiv-sects-intro {
+  font-size: 13px;
+  color: #cbd5e1;
+  margin-bottom: 15px;
+  line-height: 1.5;
+  text-align: center;
+}
+
+.cultiv-sects-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}
+
+.cultiv-sect-card {
+  background: rgba(15, 23, 42, 0.8);
+  border: 1.5px solid rgba(212, 175, 55, 0.3);
+  border-radius: 8px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  transition: all 0.25s;
+}
+
+.cultiv-sect-card:hover {
+  border-color: #00e5ff;
+  box-shadow: 0 0 20px rgba(0, 229, 255, 0.35);
+}
+
+.csect-avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  margin-bottom: 8px;
+}
+
+.cultiv-sect-card h4 {
+  margin: 4px 0 6px;
+  font-size: 14px;
+  color: #ffd700;
+}
+
+.cultiv-sect-card p {
+  font-size: 11px;
+  color: #94a3b8;
+  line-height: 1.4;
+  margin-bottom: 12px;
+}
+
+.btn-join-csect {
+  background: rgba(30, 41, 59, 0.9);
+  border: 1px solid #38bdf8;
+  color: #38bdf8;
+  font-weight: bold;
+  font-size: 12px;
+  padding: 6px 14px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-join-csect:hover {
+  background: #0284c7;
+  color: #fff;
+}
+
+/* ============================================================
+   MODAL PERMADEATH (THỌ CHUNG CHÍNH TẨM)
+   ============================================================ */
+.modal-permadeath-container {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.94);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100000;
+}
+
+.permadeath-box {
+  background: rgba(20, 10, 15, 0.95);
+  border: 2px solid #ef4444;
+  border-radius: 12px;
+  padding: 30px;
+  max-width: 520px;
+  text-align: center;
+  box-shadow: 0 0 50px rgba(239, 68, 68, 0.6);
+}
+
+.permadeath-icon {
+  font-size: 54px;
+  margin-bottom: 10px;
+  animation: pulsePermadeath 2s infinite ease-in-out;
+}
+
+@keyframes pulsePermadeath {
+  0%, 100% { transform: scale(1); filter: drop-shadow(0 0 10px #ef4444); }
+  50% { transform: scale(1.15); filter: drop-shadow(0 0 25px #ef4444); }
+}
+
+/* ============================================================
+   VÒNG CHỚP TẮT XOAY TRÒN TRANG BỊ TU TIÊN (ROTATING GLOWING AURA RING)
+   ============================================================ */
+@keyframes orbitAuraSpin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes pulseGlowAura {
+  0%, 100% { opacity: 0.85; filter: drop-shadow(0 0 4px currentColor); }
+  50% { opacity: 0.35; filter: drop-shadow(0 0 1px currentColor); }
+}
+
+.orbit-aura-ring {
+  position: absolute;
+  inset: -5px;
+  border-radius: 8px;
+  border: 2px dashed currentColor;
+  pointer-events: none;
+  z-index: 5;
+  animation: orbitAuraSpin 4s linear infinite, pulseGlowAura 2s ease-in-out infinite;
+}
+
+/* Các biến thể màu sắc theo phẩm cấp Tu Tiên */
+.orbit-aura-ring.aura-red {
+  color: #ff1744;
+}
+
+.orbit-aura-ring.aura-gold {
+  color: #ffd700;
+}
+
+.orbit-aura-ring.aura-cyan {
+  color: #00e5ff;
+}
+
+.orbit-aura-ring.aura-purple {
+  color: #c084fc;
+}
+
+.orbit-aura-ring.aura-green {
+  color: #00e676;
+}
+
+/* ============================================================
+   SỰ KIỆN CƯỜNG GIẢ TỌA HÓA - NGUYÊN HỒN ÁC HÓA (WORLD EVENT)
+   ============================================================ */
+@keyframes evilBorderPulse {
+  0% {
+    box-shadow: 0 0 25px rgba(225, 29, 72, 0.6), inset 0 0 15px rgba(147, 51, 234, 0.4);
+    border-color: #f43f5e;
+  }
+  100% {
+    box-shadow: 0 0 45px rgba(225, 29, 72, 0.9), inset 0 0 30px rgba(147, 51, 234, 0.7);
+    border-color: #c084fc;
+  }
+}
+
+@keyframes skullVibe {
+  0% { transform: scale(1) rotate(-3deg); filter: drop-shadow(0 0 10px #f43f5e); }
+  100% { transform: scale(1.2) rotate(3deg); filter: drop-shadow(0 0 25px #c084fc); }
+}
+
+@keyframes pulseDanger {
+  0%, 100% { transform: scale(1); box-shadow: 0 0 15px rgba(239, 68, 68, 0.7); }
+  50% { transform: scale(1.04); box-shadow: 0 0 30px rgba(239, 68, 68, 1); }
+}
+
+.modal-revenant-container {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  background: rgba(4, 2, 8, 0.88);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.revenant-event-box {
+  width: 720px;
+  max-width: 95vw;
+  background: linear-gradient(155deg, #180309 0%, #0d0614 60%, #05020a 100%);
+  border: 2px solid #f43f5e;
+  border-radius: 12px;
+  animation: evilBorderPulse 2.5s infinite alternate;
+  overflow: hidden;
+  color: #f8fafc;
+  box-sizing: border-box;
+}
+
+.revenant-header-glow {
+  position: relative;
+  text-align: center;
+  padding: 22px 20px 14px;
+  background: linear-gradient(180deg, rgba(225, 29, 72, 0.25) 0%, transparent 100%);
+  border-bottom: 1px solid rgba(244, 63, 94, 0.3);
+}
+
+.revenant-skull-icon {
+  font-size: 42px;
+  display: inline-block;
+  animation: skullVibe 1.2s infinite alternate;
+  margin-bottom: 6px;
+}
+
+.revenant-title {
+  margin: 0;
+  font-family: 'Noto Serif', serif;
+  font-size: 23px;
+  font-weight: 900;
+  letter-spacing: 1.5px;
+  color: #ff4757;
+  text-shadow: 0 0 15px rgba(255, 71, 87, 0.8), 0 0 30px rgba(192, 132, 252, 0.6);
+}
+
+.revenant-subtitle {
+  font-size: 12px;
+  letter-spacing: 3px;
+  color: #cbd5e1;
+  text-transform: uppercase;
+  margin-top: 4px;
+}
+
+.btn-close-revenant {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  background: transparent;
+  border: none;
+  font-size: 28px;
+  color: #94a3b8;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.btn-close-revenant:hover {
+  color: #f43f5e;
+}
+
+.revenant-body {
+  padding: 20px 24px 26px;
+}
+
+.revenant-story-box {
+  background: rgba(0, 0, 0, 0.5);
+  border-left: 3px solid #f43f5e;
+  border-right: 3px solid #c084fc;
+  border-radius: 6px;
+  padding: 14px 18px;
+  margin-bottom: 20px;
+}
+
+.revenant-story-text {
+  margin: 0;
+  font-family: 'Noto Serif', serif;
+  font-style: italic;
+  font-size: 15px;
+  line-height: 1.6;
+  color: #fecdd3;
+  text-shadow: 0 0 8px rgba(244, 63, 94, 0.5);
+}
+
+.revenant-info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.r-info-item {
+  background: rgba(15, 23, 42, 0.65);
+  border: 1px solid rgba(148, 163, 184, 0.15);
+  border-radius: 8px;
+  padding: 10px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.r-info-item.full-row {
+  grid-column: span 2;
+}
+
+.r-label {
+  font-size: 12px;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.r-val {
+  font-size: 14px;
+  font-weight: 600;
+  color: #f1f5f9;
+}
+
+.r-val.highlight-map {
+  color: #38bdf8;
+  font-weight: bold;
+  text-shadow: 0 0 10px rgba(56, 189, 248, 0.6);
+}
+
+.r-val.danger-text {
+  color: #f87171;
+  font-weight: bold;
+}
+
+.r-val.gold-text {
+  color: #fbbf24;
+  font-weight: bold;
+  text-shadow: 0 0 10px rgba(251, 191, 36, 0.5);
+}
+
+.revenant-action-row {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+}
+
+.btn-revenant-primary {
+  flex: 1.5;
+  padding: 14px 24px;
+  font-family: 'Noto Serif', serif;
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  color: #fff;
+  background: linear-gradient(135deg, #b91c1c, #dc2626 50%, #991b1b);
+  border: 1px solid #f87171;
+  border-radius: 8px;
+  cursor: pointer;
+  animation: pulseDanger 1.8s infinite;
+  transition: all 0.2s ease;
+}
+
+.btn-revenant-primary:hover {
+  filter: brightness(1.15);
+  transform: translateY(-2px);
+}
+
+.btn-revenant-secondary {
+  flex: 0.8;
+  padding: 14px 18px;
+  font-family: 'Noto Serif', serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: #cbd5e1;
+  background: rgba(30, 41, 59, 0.8);
+  border: 1px solid rgba(148, 163, 184, 0.3);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-revenant-secondary:hover {
+  background: rgba(51, 65, 85, 0.9);
+  color: #fff;
+}
+
+/* ============================================================
+   THANH KINH NGHIỆM ĐÁY MÀN HÌNH (BOTTOM EXP BAR)
+   ============================================================ */
+.bottom-exp-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 16px;
+  background: rgba(10, 15, 30, 0.95);
+  border-top: 1.5px solid #d4af37;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.7);
+  z-index: 45;
+  overflow: hidden;
+  user-select: none;
+}
+
+.bottom-exp-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #b45309, #d97706, #f59e0b 50%, #fef08a);
+  box-shadow: 0 0 10px rgba(245, 158, 11, 0.6);
+  transition: width 0.3s ease;
+}
+
+.exp-ticks {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: space-between;
+  pointer-events: none;
+}
+
+.exp-ticks span {
+  width: 1px;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.bottom-exp-text {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  font-weight: 700;
+  color: #fff;
+  text-shadow: 0 0 4px #000, 1px 1px 2px #000;
+  letter-spacing: 0.5px;
+}
+
+/* ============================================================
+   BẢN ĐỒ THẾ GIỚI: 2 TABS PHÀM GIỚI & TIÊN GIỚI
+   ============================================================ */
+.map-category-tabs {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+  border-bottom: 2px solid rgba(212, 175, 55, 0.3);
+  padding-bottom: 10px;
+}
+
+.map-cat-tab-btn {
+  flex: 1;
+  padding: 10px 16px;
+  font-family: 'Cinzel', serif;
+  font-size: 13px;
+  font-weight: bold;
+  color: #94a3b8;
+  background: rgba(30, 41, 59, 0.6);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.map-cat-tab-btn:hover {
+  color: #facc15;
+  background: rgba(30, 41, 59, 0.9);
+  border-color: rgba(250, 204, 21, 0.5);
+}
+
+.map-cat-tab-btn.active {
+  color: #0f172a;
+  background: linear-gradient(135deg, #facc15, #eab308);
+  border-color: #fef08a;
+  box-shadow: 0 0 12px rgba(250, 204, 21, 0.4);
+}
+
+.world-map-cards {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.map-select-card {
+  position: relative;
+  background: rgba(15, 23, 42, 0.85);
+  border: 1.5px solid rgba(212, 175, 55, 0.3);
+  border-radius: 10px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.25s ease;
+}
+
+.map-select-card:hover {
+  transform: translateY(-2px);
+  border-color: #facc15;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5), 0 0 15px rgba(212, 175, 55, 0.25);
+}
+
+.map-select-card.active-map {
+  border-color: #22c55e;
+  box-shadow: 0 0 15px rgba(34, 197, 94, 0.4);
+}
+
+.map-select-img {
+  width: 100%;
+  height: 120px;
+  object-fit: cover;
+  border-bottom: 1px solid rgba(212, 175, 55, 0.3);
+}
+
+.map-select-info {
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.map-select-info h4 {
+  font-family: 'Cinzel', serif;
+  font-size: 14px;
+  color: #facc15;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.current-map-tag {
+  font-size: 11px;
+  color: #22c55e;
+  background: rgba(34, 197, 94, 0.15);
+  padding: 1px 6px;
+  border-radius: 4px;
+  border: 1px solid rgba(34, 197, 94, 0.4);
+}
+
+.map-select-info p {
+  font-size: 12px;
+  color: #cbd5e1;
+  line-height: 1.5;
+  margin-bottom: 10px;
+  flex: 1;
+}
+
+.map-preview-bosses {
+  font-size: 11px;
+  color: #f87171;
+  background: rgba(239, 68, 68, 0.1);
+  padding: 4px 8px;
+  border-radius: 4px;
+  border: 1px solid rgba(239, 68, 68, 0.25);
+  margin-bottom: 10px;
+}
+
+.map-preview-drops {
+  font-size: 11px;
+  color: #38bdf8;
+  background: rgba(56, 189, 248, 0.1);
+  padding: 4px 8px;
+  border-radius: 4px;
+  border: 1px solid rgba(56, 189, 248, 0.25);
+  margin-bottom: 10px;
+}
+
+.btn-teleport-map {
+  padding: 8px 14px;
+  font-family: 'Cinzel', serif;
+  font-size: 12px;
+  font-weight: bold;
+  color: #fff;
+  background: linear-gradient(135deg, #1e40af, #2563eb);
+  border: 1px solid #60a5fa;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  align-self: flex-start;
+}
+
+.btn-teleport-map:hover {
+  background: linear-gradient(135deg, #2563eb, #3b82f6);
+  box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
+}
+
+.btn-teleport-locked {
+  background: rgba(51, 65, 85, 0.6) !important;
+  color: #94a3b8 !important;
+  border: 1px dashed #64748b !important;
+  cursor: not-allowed !important;
+}
+
+.map-lock-banner {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: bold;
+  color: #f59e0b;
+  background: rgba(245, 158, 11, 0.15);
+  padding: 4px 8px;
+  border-radius: 4px;
+  border: 1px solid rgba(245, 158, 11, 0.4);
+  margin-bottom: 10px;
+}
+
+/* ============================================================
+   BẢNG SĂN BOSS THẾ GIỚI (WORLD BOSS HUNTING BOARD)
+   ============================================================ */
+.boss-hunt-filter-bar {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 12px;
+  border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+  padding-bottom: 10px;
+}
+
+.boss-filter-btn {
+  padding: 6px 14px;
+  font-family: 'Cinzel', serif;
+  font-size: 12px;
+  font-weight: bold;
+  color: #94a3b8;
+  background: rgba(30, 41, 59, 0.5);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.boss-filter-btn:hover {
+  color: #facc15;
+  border-color: rgba(250, 204, 21, 0.4);
+}
+
+.boss-filter-btn.active {
+  color: #0f172a;
+  background: linear-gradient(135deg, #facc15, #eab308);
+  border-color: #fef08a;
+  box-shadow: 0 0 10px rgba(250, 204, 21, 0.35);
+}
+
+.boss-hunt-stats-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  color: #e2e8f0;
+  margin-bottom: 14px;
+  background: rgba(15, 23, 42, 0.7);
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.boss-hunt-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+}
+
+.boss-hunt-card {
+  background: rgba(15, 23, 42, 0.95);
+  border: 1.5px solid rgba(212, 175, 55, 0.35);
+  border-radius: 12px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  position: relative;
+  transition: all 0.25s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+}
+
+.boss-hunt-card:hover {
+  border-color: #facc15;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(250, 204, 21, 0.2);
+}
+
+.boss-hunt-card.boss-cultiv-card {
+  border-color: rgba(168, 85, 247, 0.6);
+  background: linear-gradient(145deg, rgba(15, 23, 42, 0.95), rgba(46, 16, 101, 0.4));
+}
+
+.boss-card-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.boss-avatar-box {
+  position: relative;
+  width: 68px;
+  height: 68px;
+  flex-shrink: 0;
+}
+
+.boss-avatar-img {
+  width: 100%;
+  height: 100%;
+  border-radius: 10px;
+  border: 2px solid #ef4444;
+  object-fit: cover;
+  background: #0f172a;
+}
+
+.boss-cultiv-tag {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  background: linear-gradient(135deg, #a855f7, #6366f1);
+  color: #fff;
+  font-size: 9px;
+  font-weight: bold;
+  padding: 1px 6px;
+  border-radius: 6px;
+  border: 1px solid #ffd700;
+  box-shadow: 0 0 6px rgba(168, 85, 247, 0.8);
+}
+
+.boss-meta-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.boss-meta-info h4 {
+  font-family: 'Cinzel', serif;
+  font-size: 14px;
+  font-weight: bold;
+  margin: 0 0 4px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.boss-lvl-tag {
+  background: rgba(234, 179, 8, 0.2);
+  color: #facc15;
+  border: 1px solid rgba(234, 179, 8, 0.4);
+  font-size: 11px;
+  padding: 1px 6px;
+  border-radius: 6px;
+}
+
+.boss-loc-text {
+  font-size: 12px;
+  color: #94a3b8;
+  margin-bottom: 6px;
+}
+
+.boss-status-badge {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: bold;
+  padding: 3px 8px;
+  border-radius: 6px;
+}
+
+.status-alive {
+  color: #22c55e;
+  background: rgba(34, 197, 94, 0.15);
+  border: 1px solid #22c55e;
+}
+
+.status-dead {
+  color: #f87171;
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid #f87171;
+}
+
+.boss-hp-section {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.boss-card-hp-bar {
+  width: 100%;
+  height: 8px;
+  background: rgba(30, 41, 59, 0.9);
+  border-radius: 4px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.boss-card-hp-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #dc2626, #ef4444);
+  transition: width 0.3s ease;
+}
+
+.boss-card-hp-text {
+  font-size: 11px;
+  color: #cbd5e1;
+  text-align: right;
+}
+
+.boss-loot-preview {
+  margin-top: 2px;
+}
+
+.boss-loot-title {
+  font-size: 11px;
+  color: #fbbf24;
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+
+.boss-loot-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.loot-tag-item {
+  font-size: 10px;
+  color: #38bdf8;
+  background: rgba(56, 189, 248, 0.12);
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  padding: 2px 7px;
+  border-radius: 4px;
+}
+
+.boss-card-actions {
+  margin-top: 4px;
+}
+
+.btn-hunt-teleport {
+  width: 100%;
+  text-align: center;
+  padding: 8px 14px;
+  font-family: 'Cinzel', serif;
+  font-size: 12px;
+  font-weight: bold;
+  color: #fff;
+  background: linear-gradient(135deg, #b91c1c, #dc2626);
+  border: 1px solid #f87171;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-hunt-teleport:hover {
+  filter: brightness(1.2);
+  transform: translateY(-1px);
+  box-shadow: 0 0 10px rgba(239, 68, 68, 0.6);
+}
+
+.btn-hunt-teleport.disabled {
+  background: rgba(51, 65, 85, 0.6);
+  border-color: #64748b;
+  color: #94a3b8;
+  cursor: not-allowed;
+  filter: none;
+  transform: none;
+  box-shadow: none;
+}
+
+/* ============================================================
+   RESPONSIVE MOBILE ENGINE (CHUẨN 2026 - TOUCH & RESPONSIVE)
+   ============================================================ */
+
+/* Khóa cử chỉ ngoài ý muốn & chống rung giật trên thiết bị di động */
+html, body, #screen-game, #game-canvas {
+  touch-action: none;
+  overscroll-behavior: none;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* Mặc định trên Desktop ẩn các nút điều khiển của Mobile */
+.btn-toggle-menu-mobile {
+  display: none;
+}
+.btn-minimap-toggle {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  width: 22px;
+  height: 22px;
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid #d4af37;
+  border-radius: 4px;
+  color: #ffd700;
+  font-size: 11px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 5;
+  transition: all 0.2s ease;
+}
+.btn-minimap-toggle:hover {
+  background: #d4af37;
+  color: #0f172a;
+}
+.mobile-chat-ticker {
+  display: none;
+}
+.btn-close-chat-mobile {
+  display: none;
+}
+.btn-mobile-attack {
+  display: none;
+}
+
+/* Hiệu ứng sóng nước hoàng kim khi chạm màn hình di chuyển (Tap-to-move Ripple) */
+.touch-ripple-circle {
+  position: absolute;
+  pointer-events: none;
+  border: 2.5px solid #facc15;
+  border-radius: 50%;
+  box-shadow: 0 0 15px #f59e0b, inset 0 0 10px #facc15;
+  transform: translate(-50%, -50%) scale(0.2);
+  opacity: 1;
+  animation: rippleFadeOut 0.5s ease-out forwards;
+  z-index: 15;
+}
+@keyframes rippleFadeOut {
+  0% { transform: translate(-50%, -50%) scale(0.2); opacity: 1; }
+  100% { transform: translate(-50%, -50%) scale(1.6); opacity: 0; }
+}
+
+/* ============================================================
+   1. MOBILE PORTRAIT & SMALL TABLETS (<= 768px)
+   ============================================================ */
+@media (max-width: 768px) {
+  /* TOP-LEFT: KHUNG NHÂN VẬT THU GỌN */
+  .player-hud-frame {
+    top: 8px !important;
+    left: 8px !important;
+    gap: 6px !important;
+    padding: 3px 8px 3px 3px !important;
+    border-radius: 24px 8px 8px 24px !important;
+    max-width: calc(100vw - 120px) !important;
+    z-index: 30 !important;
+  }
+  .player-avatar-wrapper {
+    width: 44px !important;
+    height: 44px !important;
+    flex-shrink: 0 !important;
+  }
+  .player-avatar-img {
+    width: 44px !important;
+    height: 44px !important;
+    border-width: 1.5px !important;
+  }
+  .level-badge {
+    font-size: 8px !important;
+    padding: 1px 3px !important;
+    bottom: -2px !important;
+    right: -2px !important;
+  }
+  .player-info-bars {
+    width: 110px !important;
+  }
+  .player-meta-row {
+    gap: 3px !important;
+    margin-bottom: 2px !important;
+  }
+  .player-name-text {
+    font-size: 11px !important;
+    max-width: 60px !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+  }
+  .badge-sect, .badge-realm {
+    font-size: 8px !important;
+    padding: 0 3px !important;
+  }
+  .bar-container {
+    height: 7px !important;
+    margin-bottom: 2px !important;
+  }
+  .bar-container.bar-exp {
+    height: 7px !important;
+  }
+  .bar-text {
+    font-size: 7px !important;
+    line-height: 7px !important;
+  }
+  .player-sub-stats {
+    font-size: 8px !important;
+    margin-top: 1px !important;
+  }
+  .player-info-bars > div:last-child {
+    font-size: 8px !important;
+    gap: 4px !important;
+    margin-top: 1px !important;
+  }
+
+  /* TOP-RIGHT: MINIMAP THU GỌN VÀ NẰM GỌN GÓC PHẢI */
+  .minimap-frame {
+    top: 8px !important;
+    right: 8px !important;
+    width: 95px !important;
+    height: 65px !important;
+    border-width: 1.5px !important;
+    border-radius: 6px !important;
+    z-index: 32 !important;
+    transition: all 0.25s ease !important;
+  }
+  .minimap-frame.collapsed {
+    width: 32px !important;
+    height: 32px !important;
+    border-radius: 50% !important;
+  }
+  .minimap-frame.collapsed #minimap-canvas,
+  .minimap-frame.collapsed .minimap-title {
+    display: none !important;
+  }
+  .minimap-title {
+    font-size: 7px !important;
+    bottom: 1px !important;
+    right: 3px !important;
+  }
+  .btn-minimap-toggle {
+    width: 18px !important;
+    height: 18px !important;
+    font-size: 9px !important;
+    top: 2px !important;
+    left: 2px !important;
+  }
+
+  /* TOP-CENTER: BOSS BAR DỜI XUỐNG DƯỚI CỤM HUD - KHÔNG BAO GIỜ VA CHẠM */
+  #boss-top-bar {
+    top: 135px !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    width: calc(100vw - 20px) !important;
+    max-width: 340px !important;
+    z-index: 25 !important;
+  }
+  .wuxia-banner {
+    top: 175px !important;
+    font-size: 11px !important;
+    padding: 4px 15px !important;
+  }
+  .boss-bar-header {
+    gap: 6px !important;
+    margin-bottom: 3px !important;
+  }
+  .boss-bar-title {
+    font-size: 11px !important;
+    max-width: 150px !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+  }
+  .boss-distance-badge {
+    font-size: 9px !important;
+    padding: 1px 5px !important;
+  }
+  .btn-goto-boss-action {
+    font-size: 9px !important;
+    padding: 2px 6px !important;
+  }
+  .boss-bar-track {
+    height: 12px !important;
+    border-width: 1px !important;
+  }
+  #boss-bar-hp-text {
+    font-size: 8px !important;
+  }
+
+  /* NÚT MỞ MENU CHỨC NĂNG & KHAY MENU DOCK */
+  .btn-toggle-menu-mobile {
+    display: flex !important;
+    align-items: center;
+    gap: 4px;
+    position: absolute !important;
+    top: 80px !important;
+    right: 8px !important;
+    z-index: 35 !important;
+    background: linear-gradient(135deg, rgba(30, 41, 59, 0.95), rgba(15, 23, 42, 0.98)) !important;
+    border: 1.5px solid #d4af37 !important;
+    color: #fde047 !important;
+    font-size: 10px !important;
+    font-weight: bold !important;
+    padding: 4px 8px !important;
+    border-radius: 6px !important;
+    cursor: pointer !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.6) !important;
+  }
+  .right-dock-menu {
+    top: 112px !important;
+    right: 8px !important;
+    display: none !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 6px !important;
+    max-height: 48vh !important;
+    overflow-y: auto !important;
+    background: rgba(15, 23, 42, 0.96) !important;
+    border: 1.5px solid #d4af37 !important;
+    border-radius: 10px !important;
+    padding: 8px 6px !important;
+    z-index: 36 !important;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.85) !important;
+  }
+  .right-dock-menu.show-mobile {
+    display: grid !important;
+    animation: fadeInMenu 0.2s ease-out;
+  }
+  @keyframes fadeInMenu {
+    from { opacity: 0; transform: translateY(-8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .btn-dock-icon {
+    width: 38px !important;
+    height: 38px !important;
+    border-radius: 8px !important;
+  }
+
+  /* KHUNG CHAT GIANG HỒ & MOBILE TICKER */
+  .mobile-chat-ticker {
+    display: flex !important;
+    position: absolute !important;
+    bottom: 6px !important;
+    left: 8px !important;
+    width: calc(100vw - 16px) !important;
+    height: 28px !important;
+    background: rgba(15, 23, 42, 0.88) !important;
+    border: 1px solid rgba(212, 175, 55, 0.6) !important;
+    border-radius: 14px !important;
+    padding: 0 8px !important;
+    align-items: center !important;
+    gap: 6px !important;
+    z-index: 28 !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.5) !important;
+    cursor: pointer !important;
+  }
+  .ticker-badge {
+    font-size: 9px !important;
+    font-weight: bold !important;
+    color: #facc15 !important;
+    white-space: nowrap !important;
+  }
+  .ticker-preview-text {
+    font-size: 10px !important;
+    color: #cbd5e1 !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    flex: 1 !important;
+  }
+  .btn-toggle-chat-btn {
+    background: #d4af37 !important;
+    color: #0f172a !important;
+    border: none !important;
+    border-radius: 10px !important;
+    font-size: 9px !important;
+    font-weight: bold !important;
+    padding: 2px 7px !important;
+    cursor: pointer !important;
+    white-space: nowrap !important;
+  }
+
+  .chat-dock {
+    display: none !important;
+    position: absolute !important;
+    bottom: 8px !important;
+    left: 8px !important;
+    width: calc(100vw - 16px) !important;
+    height: 250px !important;
+    z-index: 45 !important;
+    border-radius: 10px !important;
+  }
+  .chat-dock.active-mobile {
+    display: flex !important;
+    animation: slideUpChat 0.25s ease-out !important;
+  }
+  @keyframes slideUpChat {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .btn-close-chat-mobile {
+    display: inline-block !important;
+    margin-left: auto !important;
+    background: #dc2626 !important;
+    color: #fff !important;
+    border: none !important;
+    border-radius: 4px !important;
+    font-size: 11px !important;
+    font-weight: bold !important;
+    padding: 2px 8px !important;
+    cursor: pointer !important;
+  }
+
+  /* THANH COMBAT & KỸ NĂNG CẢM ỨNG (BOTTOM HOTBAR) */
+  .bottom-control-area {
+    bottom: 38px !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    width: 100vw !important;
+    gap: 4px !important;
+    z-index: 26 !important;
+    pointer-events: none !important;
+  }
+  .bottom-control-area > * {
+    pointer-events: auto !important;
+  }
+  .control-top-row {
+    gap: 4px !important;
+    justify-content: center !important;
+    flex-wrap: wrap !important;
+  }
+  .btn-auto-combat, .btn-hunt-boss, .btn-loot-filter {
+    padding: 3px 8px !important;
+    font-size: 9px !important;
+    border-radius: 12px !important;
+  }
+  .control-top-row label {
+    display: none !important; /* Ẩn checkbox thừa trên màn hình nhỏ để tiết kiệm diện tích */
+  }
+
+  .skills-hotbar-container {
+    padding: 4px 6px !important;
+    gap: 4px !important;
+    border-radius: 10px !important;
+    max-width: 98vw !important;
+  }
+  .quick-potions-group {
+    gap: 3px !important;
+    padding-right: 4px !important;
+  }
+  .quick-potion-slot {
+    width: 35px !important;
+    height: 35px !important;
+    border-radius: 6px !important;
+  }
+  .quick-potion-count {
+    font-size: 7px !important;
+    padding: 0 2px !important;
+    bottom: 1px !important;
+    right: 1px !important;
+  }
+  .skills-hotbar {
+    gap: 4px !important;
+  }
+  .skill-slot {
+    width: 38px !important;
+    height: 38px !important;
+    border-radius: 6px !important;
+  }
+  .skill-hotkey-badge {
+    font-size: 7px !important;
+    padding: 0 2px !important;
+    top: 1px !important;
+    left: 1px !important;
+  }
+
+  /* Nút Tấn Công Cơ Bản (Đánh Kiếm) To Tròn */
+  .btn-mobile-attack {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 44px !important;
+    height: 44px !important;
+    border-radius: 50% !important;
+    background: radial-gradient(circle, #b91c1c, #7f1d1d) !important;
+    border: 2px solid #ffd700 !important;
+    color: #fff !important;
+    cursor: pointer !important;
+    box-shadow: 0 0 10px rgba(239, 68, 68, 0.8) !important;
+    margin-left: 2px !important;
+    flex-shrink: 0 !important;
+  }
+  .btn-mobile-attack:active {
+    transform: scale(0.92) !important;
+    background: radial-gradient(circle, #ef4444, #991b1b) !important;
+  }
+  .mobile-atk-icon {
+    width: 20px !important;
+    height: 20px !important;
+    pointer-events: none !important;
+  }
+  .mobile-atk-label {
+    font-size: 8px !important;
+    font-weight: bold !important;
+    color: #fef08a !important;
+    margin-top: -3px !important;
+    pointer-events: none !important;
+  }
+
+  /* THANH TIẾN TRÌNH EXP ĐÁY MÀN HÌNH */
+  .bottom-exp-bar {
+    height: 5px !important;
+    bottom: 0 !important;
+  }
+  .bottom-exp-text {
+    font-size: 7px !important;
+  }
+
+  /* CỬA SỔ MODAL TRÊN THIẾT BỊ DI ĐỘNG */
+  .wuxia-modal {
+    width: 95vw !important;
+    max-width: 95vw !important;
+    max-height: 85vh !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    margin: 0 !important;
+    border-radius: 10px !important;
+  }
+  .modal-header {
+    padding: 8px 12px !important;
+  }
+  .modal-header h3 {
+    font-size: 13px !important;
+  }
+  .btn-close-modal {
+    width: 32px !important;
+    height: 32px !important;
+    font-size: 16px !important;
+  }
+  .inventory-grid {
+    grid-template-columns: repeat(5, 1fr) !important;
+    max-height: 45vh !important;
+    gap: 4px !important;
+  }
+  .modal-character-body, .char-col-container {
+    flex-direction: column !important;
+    gap: 10px !important;
+    max-height: 65vh !important;
+    overflow-y: auto !important;
+  }
+
+  /* FORM ĐĂNG NHẬP / ĐĂNG KÝ TRÊN MOBILE */
+  .login-panel {
+    max-width: 92vw !important;
+    padding: 16px 12px !important;
+  }
+  .game-title-header h1 {
+    font-size: 22px !important;
+  }
+  .game-subtitle {
+    font-size: 10px !important;
+  }
+  .input-group-auth input {
+    font-size: 16px !important; /* Chống tự động zoom trên iOS */
+  }
+  .sect-cards-container {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 6px !important;
+  }
+  .sect-card {
+    padding: 6px !important;
+  }
+  .sect-card h3 {
+    font-size: 12px !important;
+  }
+  .sect-card p {
+    font-size: 9px !important;
+    line-height: 1.2 !important;
+  }
+}
+
+/* ============================================================
+   2. MOBILE LANDSCAPE (MÀN HÌNH XOAY NGANG)
+   ============================================================ */
+@media (max-height: 520px) and (orientation: landscape) {
+  .player-hud-frame {
+    top: 6px !important;
+    left: 6px !important;
+    padding: 2px 6px !important;
+    border-radius: 20px 6px 6px 20px !important;
+    z-index: 30 !important;
+  }
+  .player-avatar-wrapper {
+    width: 36px !important;
+    height: 36px !important;
+  }
+  .player-avatar-img {
+    width: 36px !important;
+    height: 36px !important;
+  }
+  .player-info-bars {
+    width: 95px !important;
+  }
+  .player-name-text {
+    font-size: 10px !important;
+    max-width: 50px !important;
+  }
+  .bar-container {
+    height: 5px !important;
+  }
+  .minimap-frame {
+    top: 6px !important;
+    right: 6px !important;
+    width: 90px !important;
+    height: 58px !important;
+    z-index: 32 !important;
+  }
+  #boss-top-bar {
+    top: 6px !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    width: 340px !important;
+    max-width: 45vw !important;
+    z-index: 25 !important;
+  }
+  .boss-bar-title {
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    font-size: 10px !important;
+    max-width: 170px !important;
+  }
+  .boss-bar-header {
+    flex-wrap: nowrap !important;
+    gap: 4px !important;
+  }
+  .boss-distance-badge {
+    font-size: 8px !important;
+    padding: 1px 4px !important;
+  }
+  .btn-goto-boss-action {
+    font-size: 8px !important;
+    padding: 1px 5px !important;
+  }
+  .boss-bar-track {
+    height: 10px !important;
+  }
+  #boss-bar-hp-text {
+    font-size: 7px !important;
+  }
+  .btn-toggle-menu-mobile {
+    display: flex !important;
+    top: 68px !important;
+    right: 6px !important;
+    z-index: 35 !important;
+    font-size: 9px !important;
+    padding: 3px 6px !important;
+  }
+  .right-dock-menu {
+    display: none !important;
+    top: 92px !important;
+    right: 6px !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    max-height: 65vh !important;
+    z-index: 36 !important;
+  }
+  .right-dock-menu.show-mobile {
+    display: grid !important;
+  }
+  .bottom-control-area {
+    bottom: 8px !important;
+    right: 8px !important;
+    left: auto !important;
+    transform: none !important;
+    gap: 2px !important;
+  }
+  .control-top-row label {
+    display: none !important;
+  }
+  .btn-mobile-attack {
+    display: flex !important;
+    width: 38px !important;
+    height: 38px !important;
+  }
+  .mobile-chat-ticker {
+    display: flex !important;
+    bottom: 6px !important;
+    left: 6px !important;
+    width: 200px !important;
+    height: 24px !important;
+    z-index: 28 !important;
+  }
+  .chat-dock {
+    display: none !important;
+    width: 320px !important;
+    height: 180px !important;
+    bottom: 6px !important;
+    left: 6px !important;
+    z-index: 45 !important;
+  }
+  .chat-dock.active-mobile {
+    display: flex !important;
+  }
+  .btn-close-chat-mobile {
+    display: inline-block !important;
+  }
+  .wuxia-modal {
+    max-height: 92vh !important;
+  }
+}
+
+
+
+
+

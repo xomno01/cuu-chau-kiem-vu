@@ -1,0 +1,16 @@
+{
+  "name": "cuu-chau-kiem-vu-online",
+  "version": "1.0.0",
+  "description": "Cửu Châu Kiếm Vũ Online - Webgame Kiếm Hiệp Real-Time MMORPG Studio Grade",
+  "main": "server/server.js",
+  "scripts": {
+    "start": "node server/server.js"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "socket.io": "^4.8.1",
+    "cors": "^2.8.5"
+  },
+  "author": "Antigravity Studio",
+  "license": "ISC"
+}

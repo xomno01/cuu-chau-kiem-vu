@@ -1,0 +1,1045 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>Cửu Châu Kiếm Vũ Online - Thiên Ngoại Kiếm | Webgame Kiếm Hiệp Real-Time V2</title>
+  <link rel="stylesheet" href="css/game.css?v=20260928_mobile" />
+  <script src="/socket.io/socket.io.js"></script>
+</head>
+<body>
+
+  <!-- ============================================================
+       1. MÀN HÌNH ĐĂNG NHẬP & CHỌN MÔN PHÁI (LOGIN SCREEN)
+       ============================================================ -->
+  <!-- ============================================================
+       1. MÀN HÌNH ĐĂNG NHẬP / ĐĂNG KÝ / CHỌN NHÂN VẬT LƯU TRỮ (PERSISTENT DB)
+       ============================================================ -->
+  <div id="screen-login">
+    <div class="login-panel" style="max-width: 880px;">
+      <div class="game-title-header">
+        <h1>CỬU CHÂU KIẾM VŨ</h1>
+        <p class="game-subtitle">THIÊN NGOẠI KIẾM · GIANG HỒ KỲ DUYÊN · TU TIÊN HÓA CẢNH</p>
+      </div>
+
+      <!-- VIEW 1: FORM ĐĂNG NHẬP & ĐĂNG KÝ TÀI KHOẢN -->
+      <div id="auth-box">
+        <div class="auth-tabs">
+          <button id="tab-btn-login" class="auth-tab-btn active">ĐĂNG NHẬP</button>
+          <button id="tab-btn-register" class="auth-tab-btn">ĐĂNG KÝ TÀI KHOẢN</button>
+        </div>
+
+        <!-- Form Đăng Nhập -->
+        <div id="form-login-pane" class="auth-form-pane">
+          <div class="input-group-auth">
+            <label>Tài Khoản (Username):</label>
+            <input type="text" id="auth-login-user" placeholder="Nhập tên tài khoản..." maxlength="20" />
+          </div>
+          <div class="input-group-auth">
+            <label>Mật Khẩu (Password):</label>
+            <input type="password" id="auth-login-pass" placeholder="Nhập mật khẩu..." maxlength="30" />
+          </div>
+          <div id="auth-login-msg" class="auth-msg"></div>
+          <button id="btn-submit-login" class="btn-enter-wuxia" style="margin-top: 15px;">
+            ĐĂNG NHẬP VÀO HỆ THỐNG 🔑
+          </button>
+        </div>
+
+        <!-- Form Đăng Ký -->
+        <div id="form-register-pane" class="auth-form-pane" style="display: none;">
+          <div class="input-group-auth">
+            <label>Tài Khoản Mới:</label>
+            <input type="text" id="auth-reg-user" placeholder="Từ 3 đến 20 ký tự..." maxlength="20" />
+          </div>
+          <div class="input-group-auth">
+            <label>Mật Khẩu:</label>
+            <input type="password" id="auth-reg-pass" placeholder="Ít nhất 4 ký tự..." maxlength="30" />
+          </div>
+          <div class="input-group-auth">
+            <label>Xác Nhận Mật Khẩu:</label>
+            <input type="password" id="auth-reg-repass" placeholder="Nhập lại mật khẩu..." maxlength="30" />
+          </div>
+          <div id="auth-reg-msg" class="auth-msg"></div>
+          <button id="btn-submit-register" class="btn-enter-wuxia" style="margin-top: 15px;">
+            ĐĂNG KÝ TÀI KHOẢN MỚI ✨
+          </button>
+        </div>
+      </div>
+
+      <!-- VIEW 2: DANH SÁCH NHÂN VẬT CỦA TÀI KHOẢN (LOAD TỪ DB) -->
+      <div id="char-select-box" style="display: none;">
+        <div class="char-select-header">
+          <span style="font-size: 15px; color: #ffd700;">Tài khoản: <strong id="lbl-logged-user" style="color: #00e5ff;"></strong></span>
+          <button id="btn-auth-logout" class="btn-sm-action">Đăng Xuất</button>
+        </div>
+
+        <h3 style="color: #f1f5f9; margin: 10px 0 14px; text-align: center;">DANH SÁCH NHÂN VẬT ĐÃ LƯU</h3>
+        <div id="char-cards-list" class="char-cards-grid">
+          <!-- Render danh sách nhân vật bằng JS -->
+        </div>
+
+        <div style="text-align: center; margin-top: 18px;">
+          <button id="btn-open-create-char" class="btn-secondary-wuxia">+ TẠO NHÂN VẬT MỚI</button>
+        </div>
+      </div>
+
+      <!-- VIEW 3: TẠO NHÂN VẬT MỚI -->
+      <div id="char-create-box" style="display: none;">
+        <div class="sect-cards-container">
+          <!-- Hoa Sơn -->
+          <div class="sect-card selected" data-sect="huashan">
+            <img src="assets/images/avatar_huashan.png" class="sect-preview-img" alt="Hoa Sơn" />
+            <h3>Hoa Sơn Kiếm Phái</h3>
+            <p>
+              Vũ khí: Trường Kiếm · Thuộc tính: Phong - Lôi<br/>
+              Đặc sắc: Kiếm pháp nhanh như chớp, bạo kích cực cao, lướt gió trảm sát vạn địch.
+            </p>
+          </div>
+
+          <!-- Tiêu Dao -->
+          <div class="sect-card" data-sect="xiaoyao">
+            <img src="assets/images/avatar_xiaoyao.png" class="sect-preview-img" alt="Tiêu Dao" />
+            <h3>Tiêu Dao Tiên Tông</h3>
+            <p>
+              Vũ khí: Ngọc Tiêu & Kiếm · Thuộc tính: Thủy - Băng<br/>
+              Đặc sắc: Bắc Minh Thần Công hút chân khí, Lăng Ba Vi Bộ hư ảo, công thủ toàn diện.
+            </p>
+          </div>
+
+          <!-- Thiếu Lâm -->
+          <div class="sect-card" data-sect="shaolin">
+            <img src="assets/images/avatar_shaolin.png" class="sect-preview-img" alt="Thiếu Lâm" />
+            <h3>Thiếu Lâm Tung Sơn</h3>
+            <p>
+              Vũ khí: Thiền Trượng & Côn Pháp · Thuộc tính: Kim Cương - Ngoại Công<br/>
+              Đặc sắc: Kim Cang Bất Hoại, phản đòn cực mạnh, tanker sinh lực trâu bò bất tử.
+            </p>
+          </div>
+
+          <!-- Võ Đang -->
+          <div class="sect-card" data-sect="wudang">
+            <img src="assets/images/avatar_wudang.png" class="sect-preview-img" alt="Võ Đang" />
+            <h3>Võ Đang Thái Cực</h3>
+            <p>
+              Vũ khí: Thái Cực Kiếm · Thuộc tính: Nội Công - Đạo Pháp<br/>
+              Đặc sắc: Kiếm khí tầm xa, Tọa Vong MP Shield, dồn sát thương kiếm trận kinh hoàng.
+            </p>
+          </div>
+        </div>
+
+        <div class="input-name-group">
+          <label for="char-name-input">Danh Xưng Nhân Vật Mới:</label>
+          <input type="text" id="char-name-input" placeholder="Nhập tên nhân vật..." maxlength="24" value="Lệnh Hồ Hiệp" />
+        </div>
+
+        <div style="display: flex; gap: 12px; justify-content: center; margin-top: 15px;">
+          <button id="btn-back-to-chars" class="btn-sm-action" style="padding: 10px 20px;">Quay Lại</button>
+          <button id="btn-submit-create-char" class="btn-enter-wuxia" style="margin: 0;">
+            XÁC NHẬN TẠO NHÂN VẬT ⚔
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       2. MÀN HÌNH GAME CHÍNH (SCREEN GAME)
+       ============================================================ -->
+  <div id="screen-game" style="display: none;">
+    <canvas id="game-canvas"></canvas>
+
+    <!-- Biểu ngữ Giang Hồ thông báo toàn server -->
+    <div id="wuxia-top-banner" class="wuxia-banner"></div>
+
+    <!-- Thanh Máu Boss Thế Giới & Radar Định Vị Săn Boss -->
+    <div id="boss-top-bar">
+      <div class="boss-bar-header">
+        <div class="boss-bar-title" id="boss-bar-name">★ HẮC PHONG MA TÔN (Lv.25) ★</div>
+        <div class="boss-distance-badge" id="boss-distance-badge">🎯 Cách 450m</div>
+        <button id="btn-goto-boss" class="btn-goto-boss-action pulse-gold" title="Click hoặc bấm phím X để tự động phi thân tới diệt Boss!">⚔ TỚI DIỆT BOSS (X)</button>
+      </div>
+      <div class="boss-bar-track">
+        <div id="boss-bar-hp-fill"></div>
+        <div id="boss-bar-hp-text">22,000 / 22,000</div>
+      </div>
+    </div>
+
+    <!-- HUD Thông Tin Người Chơi (Top-Left) -->
+    <div class="player-hud-frame">
+      <div class="player-avatar-wrapper">
+        <img id="player-avatar-img" class="player-avatar-img" src="assets/images/avatar_huashan.png" alt="Avatar" />
+        <span class="level-badge" id="player-level-num">Lv.1</span>
+      </div>
+      <div class="player-info-bars">
+        <div class="player-meta-row">
+          <span class="player-name-text" id="player-name-text">Lệnh Hồ Hiệp</span>
+          <span class="badge-sect sect-huashan" id="player-sect-badge">Hoa Sơn Phái</span>
+          <span class="badge-realm" id="player-realm-badge">Luyện Khí Tầng 1</span>
+        </div>
+        <!-- Máu HP -->
+        <div class="bar-container">
+          <div class="bar-fill bar-hp" id="player-hp-fill" style="width: 100%;"></div>
+          <span class="bar-text" id="player-hp-text">1,100 / 1,100</span>
+        </div>
+        <!-- Mana / Nguyên Khí MP -->
+        <div class="bar-container">
+          <div class="bar-fill bar-mp" id="player-mp-fill" style="width: 100%;"></div>
+          <span class="bar-text" id="player-mp-text">500 / 500</span>
+        </div>
+        <!-- Kinh Nghiệm EXP -->
+        <div class="bar-container bar-exp">
+          <div class="bar-fill bar-exp" id="player-exp-fill" style="width: 0%;"></div>
+          <span class="bar-text" id="player-exp-text">EXP: 0 / 100 (0.0%)</span>
+        </div>
+        <!-- Lực chiến & Bạc & Tuổi Thọ -->
+        <div class="player-sub-stats">
+          <span>Lực Chiến: <span class="power-stat" id="player-power-text">1,850</span></span>
+          <span>🪙 Bạc: <span class="gold-stat" id="player-gold-text">2,000</span></span>
+        </div>
+        <div style="font-size: 11px; margin-top: 3px; display: flex; gap: 8px;">
+          <span style="color: #c084fc;">⚡ Tu Vi: <strong id="player-tuvi-text" style="color: #f3e8ff;">0</strong></span>
+          <span style="color: #6ee7b7;">⏳ Tuổi: <strong id="lbl-player-age" style="color: #fef08a;">18</strong>/<span id="lbl-player-max-lifespan">100</span>N</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Radar Minimap (Top-Right) -->
+    <div class="minimap-frame" id="minimap-frame">
+      <button class="btn-minimap-toggle" id="btn-toggle-minimap" title="Thu nhỏ / Phóng to Bản đồ">🗺</button>
+      <canvas id="minimap-canvas"></canvas>
+      <div class="minimap-title">CỬU CHÂU BẢN ĐỒ</div>
+    </div>
+
+    <!-- Nút Mở Menu Trên Mobile -->
+    <button class="btn-toggle-menu-mobile" id="btn-toggle-menu-mobile" title="Mở danh sách chức năng">
+      <span>☰</span> BẢNG NĂNG
+    </button>
+
+    <!-- Thanh Dock Menu Bên Phải (Ảnh Đồ Họa Cổ Phong AI Tiên Hiệp) -->
+    <div class="right-dock-menu" id="right-dock-menu">
+      <button class="btn-dock-icon pulse-gold" id="btn-dock-cultiv" title="Tu Tiên Cảnh Giới & Thọ Nguyên (Phím Y)">
+        <img src="assets/icons/dock/icon_cultiv.png" class="dock-icon-img" alt="Tu Tiên" />
+      </button>
+      <button class="btn-dock-icon btn-dock-wheel" id="btn-dock-wheel" title="Thiên Mệnh Chi Luân (Vòng Quay May Mắn - Phím O)">
+        <img src="assets/icons/dock/icon_wheel.png" class="dock-icon-img" alt="Vòng Quay" />
+        <span class="dock-badge-spin" id="dock-badge-spins">10</span>
+      </button>
+      <button class="btn-dock-icon" id="btn-dock-title" title="12 Đại Danh Hiệu Võ Lâm (Phím U)">
+        <img src="assets/icons/dock/icon_title.png" class="dock-icon-img" alt="Danh Hiệu" />
+      </button>
+      <button class="btn-dock-icon" id="btn-dock-char" title="Thuộc Tính Nhân Vật (Phím C)">
+        <img src="assets/icons/dock/icon_char.png" class="dock-icon-img" alt="Nhân Vật" />
+      </button>
+      <button class="btn-dock-icon" id="btn-dock-inv" title="Hành Trang 200 Ô (Phím B)">
+        <img src="assets/icons/dock/icon_inv.png" class="dock-icon-img" alt="Hành Trang" />
+      </button>
+      <button class="btn-dock-icon" id="btn-dock-forge" title="Lò Rèn Thần Binh & Cường Hóa (Phím G)">
+        <img src="assets/icons/dock/icon_forge.png" class="dock-icon-img" alt="Lò Rèn" />
+      </button>
+      <button class="btn-dock-icon" id="btn-dock-skill" title="Võ Học Kỹ Năng (Phím V)">
+        <img src="assets/icons/dock/icon_skill.png" class="dock-icon-img" alt="Kỹ Năng" />
+      </button>
+      <button class="btn-dock-icon" id="btn-dock-meridian" title="Kinh Mạch Bát Huyệt (Phím K)">
+        <img src="assets/icons/dock/icon_meridian.png" class="dock-icon-img" alt="Kinh Mạch" />
+      </button>
+      <button class="btn-dock-icon pulse-gold" id="btn-dock-dungeon" title="Phụ Bản Cửu U Ma Huyệt (Bí Cảnh Cực Hạn)">
+        <img src="assets/icons/dock/icon_dungeon.png" class="dock-icon-img" alt="Phụ Bản" />
+      </button>
+      <button class="btn-dock-icon pulse-gold" id="btn-dock-hunt-boss" title="⚔ Săn Boss Bản Đồ (Phím X - Tự Động Định Vị & Săn Boss)">
+        <img src="assets/icons/dock/icon_seal.png" class="dock-icon-img" alt="Săn Boss" />
+      </button>
+      <button class="btn-dock-icon" id="btn-dock-revenant" title="⚠️ Sự Kiện: Cường Giả Tọa Hóa - Nguyên Hồn Ác Hóa (Trừ Ma Vệ Đạo)" style="display: none;">
+        <img src="assets/icons/dock/icon_revenant.png" class="dock-icon-img" alt="Trừ Ma" />
+      </button>
+      <button class="btn-dock-icon" id="btn-dock-map" title="Bản Đồ Thế Giới (Phím M)">
+        <img src="assets/icons/dock/icon_map.png" class="dock-icon-img" alt="Bản Đồ" />
+      </button>
+      <button class="btn-dock-icon" id="btn-dock-rank" title="Bảng Xếp Hạng (Phím L)">
+        <img src="assets/icons/dock/icon_rank.png" class="dock-icon-img" alt="Xếp Hạng" />
+      </button>
+      <button class="btn-dock-icon" id="btn-dock-sound" title="Âm Thanh Nhạc Nền">
+        <img src="assets/icons/dock/icon_sound.png" class="dock-icon-img" alt="Âm Thanh" />
+      </button>
+    </div>
+
+    <!-- Thanh Điều Khiển & Hotbar Kỹ Năng & Bơm Dược (Bottom-Center) -->
+    <div class="bottom-control-area">
+      <div class="control-top-row">
+        <button id="btn-auto-combat" class="btn-auto-combat">⚔ TỰ ĐỘNG: TẮT (Z)</button>
+        <button id="btn-hunt-boss" class="btn-hunt-boss pulse-gold" title="Lập tức phi thân truy tìm và diệt Boss Thế Giới / Quái Tinh Anh trên bản đồ (Phím X)">☠ SĂN BOSS (X)</button>
+        <button id="btn-open-loot-filter" class="btn-loot-filter" title="Cài Đặt Bộ Lọc Nhặt Đồ">⚙ LỌC NHẶT ĐỒ</button>
+        <label style="font-size: 11px; color: #cbd5e1; cursor: pointer;">
+          <input type="checkbox" id="chk-auto-potion" checked style="vertical-align: middle;" /> Tự động cắn dược (HP < 40%)
+        </label>
+      </div>
+
+      <div class="skills-hotbar-container">
+        <!-- 3 Ô Bơm Dược Nhanh & Thiền Định -->
+        <div class="quick-potions-group">
+          <!-- Bơm Máu HP -->
+          <div class="quick-potion-slot slot-hp" id="quick-hp-slot" title="Bơm Huyết Đan (Phím Q)">
+            <img class="skill-icon" src="assets/icons/item_5.png" alt="Huyết Đan" />
+            <span class="skill-hotkey-badge">Q</span>
+            <span class="quick-potion-count" id="quick-hp-count">50</span>
+          </div>
+          <!-- Bơm Nguyên Khí Mana MP -->
+          <div class="quick-potion-slot slot-mp" id="quick-mp-slot" title="Bơm Nguyên Khí Hoàn (Phím E)">
+            <img class="skill-icon" src="assets/icons/item_6.png" alt="Khí Hoàn" />
+            <span class="skill-hotkey-badge">E</span>
+            <span class="quick-potion-count" id="quick-mp-count">50</span>
+          </div>
+          <!-- Thiền Định Đả Tọa -->
+          <div class="quick-potion-slot slot-meditate" id="quick-meditate-slot" title="Vận Khí Thiền Định (Phím T) - Hồi máu & chân khí">
+            <img class="skill-icon" src="assets/icons/skill_7.png" alt="Thiền Định" />
+            <span class="skill-hotkey-badge">T</span>
+          </div>
+        </div>
+
+        <!-- 4 Kỹ Năng Môn Phái & Khinh Công -->
+        <div class="skills-hotbar">
+          <div class="skill-slot" id="skill-slot-1">
+            <img class="skill-icon" src="assets/icons/skill_1.png" alt="Chiêu 1" />
+            <span class="skill-hotkey-badge">1</span>
+          </div>
+          <div class="skill-slot" id="skill-slot-2">
+            <img class="skill-icon" src="assets/icons/skill_2.png" alt="Chiêu 2" />
+            <span class="skill-hotkey-badge">2</span>
+          </div>
+          <div class="skill-slot" id="skill-slot-3">
+            <img class="skill-icon" src="assets/icons/skill_6.png" alt="Chiêu 3" />
+            <span class="skill-hotkey-badge">3</span>
+          </div>
+          <div class="skill-slot" id="skill-slot-4">
+            <img class="skill-icon" src="assets/icons/skill_8.png" alt="Tuyệt kỹ" />
+            <span class="skill-hotkey-badge">4</span>
+          </div>
+          <div class="skill-slot slot-dash" id="skill-slot-dash">
+            <img class="skill-icon" src="assets/icons/skill_4.png" alt="Khinh công" />
+            <span class="skill-hotkey-badge">SPACE</span>
+          </div>
+          <!-- Nút Tấn Công Cơ Bản To Cho Mobile -->
+          <button id="btn-mobile-attack" class="btn-mobile-attack pulse-gold" title="Tấn Công Cơ Bản (Đánh Kiếm)">
+            <img src="assets/icons/dock/icon_skill.png" class="mobile-atk-icon" alt="Đánh" />
+            <span class="mobile-atk-label">ĐÁNH</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Thanh Ticker Chat Nhỏ Gọn Trên Mobile -->
+    <div id="mobile-chat-ticker" class="mobile-chat-ticker">
+      <span class="ticker-badge">💬 CHAT</span>
+      <span id="ticker-preview-text" class="ticker-preview-text">Chào mừng bạn gia nhập Cửu Châu Kiếm Vũ!</span>
+      <button id="btn-toggle-chat-mobile" class="btn-toggle-chat-btn">▲ Mở Chat</button>
+    </div>
+
+    <!-- Khung Chat Giang Hồ (Bottom-Left) -->
+    <div class="chat-dock" id="chat-dock">
+      <div class="chat-channel-tabs" id="chat-channel-tabs">
+        <button class="chat-tab-btn active" data-channel="all">Tất Cả</button>
+        <button class="chat-tab-btn" data-channel="world">🌐 Thế Giới</button>
+        <button class="chat-tab-btn" data-channel="system">📢 Hệ Thống</button>
+        <button id="btn-close-chat-mobile" class="btn-close-chat-mobile" title="Thu gọn chat">✕</button>
+      </div>
+      <div class="chat-messages" id="chat-messages">
+        <div class="chat-msg msg-system" data-channel="system">
+          <span class="chat-tag-sys">【Hệ Thống】</span>
+          <span class="chat-text-sys">Chào mừng bạn gia nhập Cửu Châu Kiếm Vũ! Bấm C xem thuộc tính, B mở túi 200 ô, V mở bảng kỹ năng, M chuyển map, Q/E bơm máu/mana!</span>
+        </div>
+      </div>
+      <div class="chat-input-bar">
+        <span class="chat-send-channel-tag" id="chat-current-channel" title="Kênh gửi hiện tại">【Thế Giới】</span>
+        <input type="text" id="chat-input-box" placeholder="Trò chuyện toàn thế giới... (Enter)" maxlength="80" />
+        <button id="btn-send-chat" class="btn-chat-send">Gửi</button>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         3. CÁC CỬA SỔ MODAL (NHÂN VẬT, TÚI 200 Ô, KỸ NĂNG, BẢN ĐỒ)
+         ============================================================ -->
+
+    <!-- MODAL 1: THUỘC TÍNH NHÂN VẬT TỰ THÂN (PHÍM C) -->
+    <div class="wuxia-modal" id="modal-character">
+      <div class="modal-header">
+        <h3>👤 THUỘC TÍNH TỰ THÂN NHÂN VẬT</h3>
+        <button class="btn-close-modal">✕</button>
+      </div>
+      <div class="modal-body modal-character-body">
+        <!-- Cột trái: 4 Điểm tiềm năng -->
+        <div class="char-left-col">
+          <div class="stat-points-banner">
+            Điểm Tiềm Năng Tự Do: <span id="char-stat-points-val">10</span>
+          </div>
+
+          <!-- Sức Mạnh -->
+          <div class="stat-alloc-row">
+            <div class="stat-label-box">
+              <span class="stat-name-main">Sức Mạnh</span>
+              <span class="stat-name-sub">+Ngoại Công, Bạo Kích</span>
+            </div>
+            <span class="stat-value-main" id="char-str-val">15</span>
+            <button class="btn-add-stat" id="btn-add-str">+1</button>
+          </div>
+
+          <!-- Thể Chất -->
+          <div class="stat-alloc-row">
+            <div class="stat-label-box">
+              <span class="stat-name-main">Thể Chất</span>
+              <span class="stat-name-sub">+Khí Huyết, Ngoại Thủ</span>
+            </div>
+            <span class="stat-value-main" id="char-vit-val">15</span>
+            <button class="btn-add-stat" id="btn-add-vit">+1</button>
+          </div>
+
+          <!-- Thân Pháp -->
+          <div class="stat-alloc-row">
+            <div class="stat-label-box">
+              <span class="stat-name-main">Thân Pháp</span>
+              <span class="stat-name-sub">+Né Tránh, Tốc Độ</span>
+            </div>
+            <span class="stat-value-main" id="char-agi-val">15</span>
+            <button class="btn-add-stat" id="btn-add-agi">+1</button>
+          </div>
+
+          <!-- Nội Lực -->
+          <div class="stat-alloc-row">
+            <div class="stat-label-box">
+              <span class="stat-name-main">Nội Lực</span>
+              <span class="stat-name-sub">+Chân Khí, Nội Thủ</span>
+            </div>
+            <span class="stat-value-main" id="char-eng-val">15</span>
+            <button class="btn-add-stat" id="btn-add-eng">+1</button>
+          </div>
+
+          <button class="btn-reset-stats" id="btn-reset-stats">🔄 Tẩy Tủy Tái Lập Điểm (Tiêu 10,000 Bạc)</button>
+        </div>
+
+        <!-- Cột phải: Bảng chi tiết toàn bộ chỉ số -->
+        <div class="char-right-col">
+          <table class="char-detail-table">
+            <tr><td>Lực Chiến Tổng Hợp</td><td class="val-col" id="char-detail-power">1,850</td></tr>
+            <tr><td>Khí Huyết (HP)</td><td class="val-col" id="char-detail-hp">1,100 / 1,100</td></tr>
+            <tr><td>Chân Khí (Nguyên Khí)</td><td class="val-col" id="char-detail-mp">500 / 500</td></tr>
+            <tr><td>Sát Thương Ngoại Công</td><td class="val-col" id="char-detail-atk">145</td></tr>
+            <tr><td>Phòng Ngự Bào Hộ</td><td class="val-col" id="char-detail-def">68</td></tr>
+            <tr><td>Tỷ Lệ Bạo Kích</td><td class="val-col" id="char-detail-crit">18%</td></tr>
+            <tr><td>Khả Năng Né Tránh</td><td class="val-col" id="char-detail-dodge">12%</td></tr>
+            <tr><td>Tốc Độ Di Chuyển</td><td class="val-col" id="char-detail-speed">295 px/s</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL 2: TÚI ĐỒ 200 Ô HÀNH TRANG (PHÍM B) -->
+    <div class="wuxia-modal" id="modal-inventory">
+      <div class="modal-header">
+        <h3>🎒 HÀNH TRANG ĐẠI DUNG LƯỢNG (200 Ô)</h3>
+        <button class="btn-close-modal">✕</button>
+      </div>
+      <div class="modal-body modal-inventory-body-200">
+        <!-- Toolbar phân loại & Sắp xếp -->
+        <div class="inv-toolbar">
+          <div class="inv-tabs-list">
+            <button class="inv-tab-btn active" data-filter="all">Tất Cả</button>
+            <button class="inv-tab-btn" data-filter="equipment">Trang Bị</button>
+            <button class="inv-tab-btn" data-filter="consumable">Đan Dược</button>
+            <button class="inv-tab-btn" data-filter="scripture">Bí Kíp & Ngọc</button>
+          </div>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span style="font-size: 12px; color: #94a3b8; margin-right: 4px;">Sức Chứa: <strong id="inv-capacity-text" style="color:#facc15;">7/200</strong></span>
+            <button class="btn-sort-inv" id="btn-sort-inventory">⚡ Sắp Xếp</button>
+            <button class="btn-sell-junk" id="btn-sell-junk" title="Bán tất cả đồ phẩm cấp Trắng (Phổ Thông) và Lục (Ưu Tú) lấy Bạc">♻ Bán Đồ Rác</button>
+          </div>
+        </div>
+
+        <!-- Thanh Tùy Chọn Bán Nhanh Theo Phẩm Cấp (Đầy Đủ 9 Cấp Bậc Phẩm Cấp) -->
+        <div class="inv-rarity-sell-bar">
+          <div class="rarity-sell-title">
+            <span style="font-weight: bold; color: #facc15; font-size: 11.5px;">⚖ Thanh Lý:</span>
+          </div>
+          <div class="rarity-checkbox-group" id="rarity-sell-checkboxes">
+            <label class="rarity-chk-label rarity-white"><input type="checkbox" value="common" checked /> <span class="dot-rarity dot-white"></span>Trắng</label>
+            <label class="rarity-chk-label rarity-green"><input type="checkbox" value="uncommon" checked /> <span class="dot-rarity dot-green"></span>Lục</label>
+            <label class="rarity-chk-label rarity-blue"><input type="checkbox" value="rare" /> <span class="dot-rarity dot-blue"></span>Lam</label>
+            <label class="rarity-chk-label rarity-purple"><input type="checkbox" value="epic" /> <span class="dot-rarity dot-purple"></span>Tím</label>
+            <label class="rarity-chk-label rarity-gold"><input type="checkbox" value="legendary" /> <span class="dot-rarity dot-gold"></span>Vàng</label>
+            <label class="rarity-chk-label rarity-orange"><input type="checkbox" value="mythic" /> <span class="dot-rarity dot-orange"></span>Cam</label>
+            <label class="rarity-chk-label rarity-red"><input type="checkbox" value="celestial" /> <span class="dot-rarity dot-red"></span>Đỏ</label>
+            <label class="rarity-chk-label rarity-black"><input type="checkbox" value="abyssal" /> <span class="dot-rarity dot-black"></span>Đen</label>
+            <label class="rarity-chk-label rarity-plat"><input type="checkbox" value="platinum" /> <span class="dot-rarity dot-plat"></span>Bạch Kim</label>
+          </div>
+          <button class="btn-sell-selected-rarity" id="btn-sell-selected-rarity" title="Bán toàn bộ trang bị thuộc các phẩm cấp đã tích chọn">💰 Bán Đã Chọn</button>
+        </div>
+
+        <div class="inv-content-split">
+          <!-- Cột 9 Vị Trí Trang Bị Đang Mặc -->
+          <div class="inv-equipped-column">
+            <div style="font-size: 11px; color:#cbd5e1; margin-bottom:4px; text-align:center;">9 TRANG BỊ</div>
+            <div class="equipped-slots-grid">
+              <div class="inv-cell-200" id="equip-weapon" title="Vũ Khí"></div>
+              <div class="inv-cell-200" id="equip-helmet" title="Chiến Mão / Nón"></div>
+              <div class="inv-cell-200" id="equip-necklace" title="Hạng Liên / Dây Chuyền"></div>
+              <div class="inv-cell-200" id="equip-armor" title="Chiến Bào / Áo Giáp"></div>
+              <div class="inv-cell-200" id="equip-gloves" title="Hộ Oản / Găng Tay"></div>
+              <div class="inv-cell-200" id="equip-ring" title="Giới Chỉ / Nhẫn"></div>
+              <div class="inv-cell-200" id="equip-pants" title="Chiến Khố / Quần"></div>
+              <div class="inv-cell-200" id="equip-boots" title="Phi Hài / Giày"></div>
+              <div class="inv-cell-200" id="equip-talisman" title="Phi Phong / Lệnh Bài"></div>
+            </div>
+          </div>
+
+          <!-- Lưới 200 Ô Cuộn Mượt Mà -->
+          <div class="inv-grid-scroll-box">
+            <div class="inv-grid-200" id="inv-grid-container-200"></div>
+          </div>
+        </div>
+
+        <div class="inv-item-detail" id="inv-item-detail" style="margin-top: 15px;">
+          <p style="color:#94a3b8; font-size:12px; text-align:center;">Trỏ chuột vào đồ để xem thuộc tính · Click để thao tác</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL 3: BẢNG KỸ NĂNG VÕ HỌC (PHÍM V) -->
+    <div class="wuxia-modal" id="modal-skill-tree">
+      <div class="modal-header">
+        <h3>⚔ BẢNG KỸ NĂNG VÕ HỌC TRẤN PHÁI</h3>
+        <button class="btn-close-modal">✕</button>
+      </div>
+      <div class="modal-body modal-skilltree-body">
+        <div class="skill-tree-top">
+          <span>Điểm Võ Học Có Sẵn: <strong id="skill-points-val">3</strong></span>
+          <span style="font-size: 12px; color:#94a3b8;">Mỗi khi lên cấp nhận +1 Điểm Võ Học</span>
+        </div>
+        <div class="skill-tree-list" id="skill-tree-list"></div>
+      </div>
+    </div>
+
+    <!-- MODAL 4: BẢN ĐỒ THẾ GIỚI & TIÊN GIỚI HUYỀN CẢNH (PHÍM M) -->
+    <div class="wuxia-modal" id="modal-world-map">
+      <div class="modal-header">
+        <h3>🗺 BẢN ĐỒ THẾ GIỚI CỬU CHÂU & TIÊN GIỚI (PHÍM M)</h3>
+        <button class="btn-close-modal">✕</button>
+      </div>
+      <div class="modal-body modal-worldmap-body" style="width: 860px; max-height: 85vh; overflow-y: auto;">
+        <!-- Tabs Map: Phàm Giới & Tiên Giới -->
+        <div class="map-category-tabs">
+          <button class="map-cat-tab-btn active" id="tab-btn-map-mortal" data-tab="mortal">🏯 CỬU CHÂU PHÀM GIỚI (Lv.1 - 60)</button>
+          <button class="map-cat-tab-btn" id="tab-btn-map-immortal" data-tab="immortal">✨ TIÊN GIỚI HUYỀN CẢNH (Lv.30 - 100)</button>
+        </div>
+        <div class="world-map-cards" id="world-map-cards"></div>
+      </div>
+    </div>
+
+    <!-- MODAL 4B: BẢNG SĂN BOSS THẾ GIỚI & NGỰ KIẾM TRUY SÁT (PHÍM X) -->
+    <div class="wuxia-modal" id="modal-boss-hunt">
+      <div class="modal-header">
+        <h3>⚔ BẢNG SĂN BOSS THẾ GIỚI · NGỰ KIẾM TRUY SÁT (PHÍM X)</h3>
+        <button class="btn-close-modal">✕</button>
+      </div>
+      <div class="modal-body modal-bosshunt-body" style="width: 900px; max-height: 85vh; overflow-y: auto;">
+        <div class="boss-hunt-filter-bar">
+          <button class="boss-filter-btn active" data-filter="all">TẤT CẢ BOSS</button>
+          <button class="boss-filter-btn" data-filter="alive">ĐANG XUẤT HIỆN 🔴</button>
+          <button class="boss-filter-btn" data-filter="mortal">PHÀM GIỚI BOSS</button>
+          <button class="boss-filter-btn" data-filter="cultiv">TIÊN GIỚI & GIÁNG THẾ ✨</button>
+        </div>
+        <div class="boss-hunt-stats-bar">
+          <span id="boss-hunt-count-text">Đang tải danh sách Boss...</span>
+          <span style="font-size: 12px; color: #94a3b8;">* Nhấp [Phi Thân] để tự động ngự kiếm bay thẳng tới Boss!</span>
+        </div>
+        <div class="boss-hunt-grid" id="boss-hunt-grid">
+          <!-- Render danh sách Boss ở đây -->
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL 5: KINH MẠCH BÁT HUYỆT (PHÍM K) -->
+    <div class="wuxia-modal" id="modal-meridians">
+      <div class="modal-header">
+        <h3>🧘 KINH MẠCH BÁT HUYỆT</h3>
+        <button class="btn-close-modal">✕</button>
+      </div>
+      <div class="modal-body modal-meridians-body" style="width: 560px;">
+        <div class="meridian-top-info" style="display:flex; justify-content:space-between; margin-bottom:12px; color:#facc15;">
+          <span>Điểm Tu Vi Chân Khí: <strong id="meridian-points-val">3</strong></span>
+          <span>Cảnh Giới: <strong id="meridian-realm-val">Luyện Khí</strong></span>
+        </div>
+        <div class="meridians-list" id="meridians-list"></div>
+      </div>
+    </div>
+
+    <!-- MODAL 6: THẬP ĐẠI CAO THỦ (PHÍM L) -->
+    <div class="wuxia-modal" id="modal-ranking">
+      <div class="modal-header">
+        <h3>🏆 THẬP ĐẠI CAO THỦ CỬU CHÂU</h3>
+        <button class="btn-close-modal">✕</button>
+      </div>
+      <div class="modal-body" style="width: 580px;">
+        <table class="ranking-table" style="width:100%; border-collapse:collapse; font-size:13px;">
+          <thead>
+            <tr style="border-bottom:1.5px solid #d4af37; color:#facc15;">
+              <th style="padding:8px;">Hạng</th><th>Hiệp Khách</th><th>Môn Phái</th><th>Lực Chiến</th><th>Cảnh Giới</th>
+            </tr>
+          </thead>
+          <tbody id="ranking-table-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- MODAL 7: TỬ TRẬN HỒI SINH -->
+    <div class="wuxia-modal" id="modal-death">
+      <h2>HIỆP KHÁCH TRỌNG THƯƠNG</h2>
+      <p>Khí huyết cạn kiệt, tạm lui về Lạc Dương Thành dưỡng thương đả tọa.</p>
+      <button class="btn-respawn" id="btn-respawn">HỒI SINH TẠI THÀNH</button>
+    </div>
+
+    <!-- MODAL 8: HỘI THOẠI NPC TRONG THÀNH LẠC DƯƠNG -->
+    <div class="wuxia-modal" id="modal-npc-dialogue">
+      <div class="modal-header">
+        <h3 id="npc-modal-title">❖ HỘI THOẠI CAO NHÂN ❖</h3>
+        <button class="btn-close-modal">✕</button>
+      </div>
+      <div class="modal-body npc-dialogue-body" style="width: 540px;">
+        <div class="npc-profile-box">
+          <img src="assets/images/avatar_huashan.png" id="npc-avatar-img" class="npc-avatar" />
+          <div class="npc-info-text">
+            <h4 id="npc-name-text">Âu Dã Tử</h4>
+            <span class="npc-title-badge" id="npc-title-text">Đệ Nhất Thần Đúc</span>
+          </div>
+        </div>
+        <div class="npc-speech-bubble" id="npc-dialogue-text">
+          Lão phu rèn kiếm nửa đời, chỉ đúc thần binh cho bậc anh hùng trượng phu!
+        </div>
+        <div class="npc-actions-list" id="npc-actions-list">
+          <!-- Dynamic Action Buttons -->
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL 9: LÒ RÈN THIẾT NGƯU (CƯỜNG HÓA, ĐỤC LỖ, KHẢM NGỌC, GHÉP NGỌC) -->
+    <div class="wuxia-modal" id="modal-forge">
+      <div class="modal-header">
+        <h3>⚒ THIẾT NGƯU · THẦN ĐÚC LÒ RÈN</h3>
+        <button class="btn-close-modal">✕</button>
+      </div>
+      <div class="modal-body forge-modal-body" style="width: 720px; max-height: 80vh; overflow-y: auto;">
+        <!-- Tabs Navigation -->
+        <div class="forge-tabs">
+          <button class="forge-tab-btn active" data-tab="enhance">⚒ CƯỜNG HÓA (+1 ~ +15)</button>
+          <button class="forge-tab-btn" data-tab="socket">💎 ĐỤC LỖ & KHẢM NGỌC</button>
+          <button class="forge-tab-btn" data-tab="combine">🔮 GHÉP NGỌC (3 LÊN 1)</button>
+        </div>
+
+        <!-- TAB 1: CƯỜNG HÓA -->
+        <div class="forge-tab-content active" id="tab-forge-enhance">
+          <div class="forge-layout-split">
+            <!-- Cột trái: Chọn trang bị trong túi -->
+            <div class="forge-item-selector">
+              <div class="forge-section-title">Chọn Trang Bị Cường Hóa</div>
+              <div class="forge-equips-grid" id="forge-enhance-equip-list">
+                <!-- Danh sách trang bị sẽ render ở đây -->
+              </div>
+            </div>
+
+            <!-- Cột phải: Chi tiết cường hóa -->
+            <div class="forge-detail-panel">
+              <div class="forge-target-card" id="forge-target-card">
+                <div class="forge-placeholder-text">Vui lòng chọn một trang bị để cường hóa</div>
+              </div>
+
+              <div class="forge-rates-box" id="forge-rates-box" style="display: none;">
+                <div class="rate-row">
+                  <span>Tỷ lệ thành công:</span>
+                  <span class="rate-val" id="enhance-success-rate">100%</span>
+                </div>
+                <div class="rate-row">
+                  <span>Tiêu hao:</span>
+                  <span class="cost-val" id="enhance-stone-req">Đá Cường Hóa x1 (Có: 0)</span>
+                </div>
+                <div class="rate-row">
+                  <span>Chi phí Bạc:</span>
+                  <span class="cost-val" id="enhance-silver-req">500 Bạc</span>
+                </div>
+                <div class="rate-warning" id="enhance-penalty-warn">
+                  ⚠ Cấp +7 trở lên nếu thất bại sẽ bị rớt 1 cấp!
+                </div>
+                <div class="protect-charm-toggle">
+                  <label>
+                    <input type="checkbox" id="chk-use-protect-charm" />
+                    <span>Dùng Bùa Bảo Hộ (Chống rớt cấp khi thất bại)</span>
+                  </label>
+                  <span class="charm-count" id="enhance-charm-count">(Có: 0)</span>
+                </div>
+              </div>
+
+              <button class="btn-action-wuxia btn-do-forge" id="btn-do-enhance" disabled>
+                ⚒ BẮT ĐẦU CƯỜNG HÓA
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 2: ĐỤC LỖ & KHẢM NGỌC -->
+        <div class="forge-tab-content" id="tab-forge-socket" style="display: none;">
+          <div class="forge-layout-split">
+            <!-- Cột trái: Chọn trang bị -->
+            <div class="forge-item-selector">
+              <div class="forge-section-title">Chọn Trang Bị Đục / Khảm</div>
+              <div class="forge-equips-grid" id="forge-socket-equip-list">
+                <!-- Danh sách trang bị -->
+              </div>
+            </div>
+
+            <!-- Cột phải: Quản lý 3 lỗ khảm ngọc -->
+            <div class="forge-detail-panel">
+              <div class="forge-target-card" id="socket-target-card">
+                <div class="forge-placeholder-text">Chọn một trang bị để quản lý lỗ khảm</div>
+              </div>
+
+              <div class="socket-slots-container" id="socket-slots-list" style="display: none;">
+                <!-- 3 Sockets slots -->
+              </div>
+
+              <!-- Danh sách ngọc trong túi để chọn khảm -->
+              <div class="gem-picker-section" id="gem-picker-section" style="display: none;">
+                <div class="forge-section-title" style="margin-top:10px;">Chọn Ngọc Trong Túi Để Khảm</div>
+                <div class="gems-inventory-grid" id="gems-inventory-grid"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 3: GHÉP NGỌC (3 LÊN 1) -->
+        <div class="forge-tab-content" id="tab-forge-combine" style="display: none;">
+          <div class="combine-gem-wrapper">
+            <div class="forge-section-title">Ghép 3 Viên Ngọc Cùng Loại Cùng Cấp ➔ 1 Viên Cấp Tiếp Theo (Tỷ Lệ 100%)</div>
+            <div class="gems-combinable-grid" id="gems-combinable-grid">
+              <!-- Danh sách các loại ngọc đủ 3 viên để ghép -->
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- MODAL 10: THIÊN MỆNH CHI LUÂN (VÒNG QUAY MAY MẮN 10 LƯỢT MIỄN PHÍ) -->
+    <div class="wuxia-modal modal-wheel-container" id="modal-lucky-wheel">
+      <div class="modal-header">
+        <h3>🎡 THIÊN MỆNH CHI LUÂN · PHÚC LỢI ĐĂNG NHẬP</h3>
+        <button class="btn-close-modal">✕</button>
+      </div>
+      <div class="modal-body wheel-body">
+        <div class="wheel-left-area">
+          <!-- Vòng quay xoay vật lý -->
+          <div class="wheel-stage">
+            <!-- Vòng hào quang tiên khí xoay chậm ngược chiều -->
+            <div class="wheel-celestial-halo"></div>
+
+            <!-- Kim chỉ thiên mệnh ở đỉnh 12h -->
+            <div class="wheel-pointer" id="wheel-pointer">
+              <div class="pointer-needle"></div>
+              <div class="pointer-gem"></div>
+            </div>
+
+            <!-- Đĩa quay chính chứa ảnh lucky_wheel.jpg -->
+            <div class="wheel-disc-wrapper" id="wheel-disc">
+              <img src="assets/images/lucky_wheel.jpg" class="wheel-disc-img" alt="Thiên Mệnh Chi Luân" />
+            </div>
+
+            <!-- Nút bấm Khai Luân ở chính tâm đĩa quay -->
+            <button class="wheel-center-btn" id="btn-spin-wheel">
+              <span class="spin-btn-title">KHAI LUÂN</span>
+              <span class="spin-btn-sub" id="spin-btn-count">FREE 10</span>
+            </button>
+          </div>
+
+          <div class="wheel-status-bar">
+            <span>Lượt Quay Miễn Phí: <strong id="wheel-spins-left" style="color:#facc15; font-size:16px;">10</strong>/10</span>
+            <span style="font-size:11px; color:#94a3b8;">Hết lượt: 500 Bạc/lượt</span>
+          </div>
+        </div>
+
+        <!-- Cột danh sách 10 phần thưởng rực rỡ bên phải -->
+        <div class="wheel-right-area">
+          <div class="wheel-rewards-title">✦ 10 ĐẠI PHÚC LỢI THIÊN MỆNH ✦</div>
+          <div class="wheel-rewards-list">
+            <div class="wheel-reward-item item-plat"><span class="rew-idx">1</span> ★ Thần Binh Bạch Kim Chí Tôn (2% Siêu Hiếm) ★</div>
+            <div class="wheel-reward-item item-gold"><span class="rew-idx">2</span> Túi Vàng Đại Phú Hào (+10,000 Ngân Lượng)</div>
+            <div class="wheel-reward-item item-legend"><span class="rew-idx">3</span> Bạch Hổ Thần Thú Giới Chỉ (Hoàng Kim)</div>
+            <div class="wheel-reward-item"><span class="rew-idx">4</span> Bát Hoang Thần Thạch (+5 Điểm Võ Học)</div>
+            <div class="wheel-reward-item"><span class="rew-idx">5</span> Ngọc Bích Hộ Thể (+8 Điểm Tiềm Năng Tự Do)</div>
+            <div class="wheel-reward-item"><span class="rew-idx">6</span> Định Hải Thần Châu (+10 Điểm Chân Khí)</div>
+            <div class="wheel-reward-item"><span class="rew-idx">7</span> Rương Báu Hoàng Kim (+5,000 Ngân Lượng)</div>
+            <div class="wheel-reward-item"><span class="rew-idx">8</span> Thái Huyền Bí Tịch x3</div>
+            <div class="wheel-reward-item"><span class="rew-idx">9</span> Cửu Chuyển Huyết Đan x30 (Hồi máu tức thì)</div>
+            <div class="wheel-reward-item"><span class="rew-idx">10</span> Quy Nguyên Khí Hoàn x30 (Hồi chân khí)</div>
+          </div>
+          <!-- Khung chúc mừng khi trúng thưởng -->
+          <div class="wheel-winner-announcement" id="wheel-winner-box" style="display:none;">
+            <div class="winner-title">🎉 THIÊN MỆNH AN BÀI TRÚNG THƯỞNG 🎉</div>
+            <div class="winner-item-name" id="winner-item-name">★ BẠCH KIM CHÍ TÔN THẦN BINH ★</div>
+            <div class="winner-item-desc" id="winner-item-desc">Đã được chuyển thẳng vào túi đồ của hiệp khách!</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL 11: HỆ THỐNG 12 ĐẠI DANH HIỆU VÕ LÂM (PHÍM U) -->
+    <div class="wuxia-modal modal-titles-container" id="modal-titles">
+      <div class="modal-header">
+        <h3>👑 12 ĐẠI DANH HIỆU VÕ LÂM CỬU CHÂU</h3>
+        <button class="btn-close-modal">✕</button>
+      </div>
+      <div class="modal-body modal-titles-body">
+        <div class="titles-header-info">
+          <div class="current-title-box">
+            <span style="color:#94a3b8; font-size:12px;">Đang Kích Hoạt:</span>
+            <div id="active-title-display" class="active-title-badge">Sơ Xuất Giang Hồ</div>
+          </div>
+          <div class="titles-note">✦ Danh hiệu mở khóa theo cấp độ, cộng vĩnh viễn thuộc tính & phát hào quang xoay rực rỡ quanh thân! ✦</div>
+        </div>
+        <div class="titles-grid-container" id="titles-list-container">
+          <!-- 12 Danh hiệu sẽ được render động -->
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL 12: BỘ LỌC TỰ NHẶT ĐỒ THEO PHẨM CẤP & CHỦNG LOẠI -->
+    <div class="wuxia-modal modal-filter-container" id="modal-loot-filter">
+      <div class="modal-header">
+        <h3>⚙ BỘ LỌC TỰ NHẶT ĐỒ THEO PHẨM CẤP</h3>
+        <button class="btn-close-modal">✕</button>
+      </div>
+      <div class="modal-body modal-filter-body">
+        <div class="filter-group-box">
+          <div class="filter-box-title">1. Phẩm Cấp Trang Bị Tối Thiểu Được Nhặt (Bỏ qua phẩm cấp thấp hơn):</div>
+          <div class="filter-radio-grid">
+            <label class="filter-radio-label"><input type="radio" name="loot-min-rarity" value="common" checked /> <span style="color:#cbd5e1">⚪ Tất Cả (Phổ Thông / Trắng+)</span></label>
+            <label class="filter-radio-label"><input type="radio" name="loot-min-rarity" value="uncommon" /> <span style="color:#22c55e">🟢 Từ Ưu Tú (Lục) Trở Lên</span></label>
+            <label class="filter-radio-label"><input type="radio" name="loot-min-rarity" value="rare" /> <span style="color:#38bdf8">🔵 Từ Hiếm (Lam) Trở Lên</span></label>
+            <label class="filter-radio-label"><input type="radio" name="loot-min-rarity" value="epic" /> <span style="color:#c084fc">🟣 Từ Sử Thi (Tím) Trở Lên</span></label>
+            <label class="filter-radio-label"><input type="radio" name="loot-min-rarity" value="legendary" /> <span style="color:#facc15">🟡 Từ Hoàng Kim (Vàng) Trở Lên</span></label>
+            <label class="filter-radio-label"><input type="radio" name="loot-min-rarity" value="mythic" /> <span style="color:#fb923c">🟠 Từ Truyền Thuyết (Cam) Trở Lên</span></label>
+            <label class="filter-radio-label"><input type="radio" name="loot-min-rarity" value="celestial" /> <span style="color:#ef4444">🔴 Từ Thần Thoại (Đỏ) Trở Lên</span></label>
+            <label class="filter-radio-label"><input type="radio" name="loot-min-rarity" value="abyssal" /> <span style="color:#a855f7">⚫ Từ Ma Thần (Đen) Trở Lên</span></label>
+            <label class="filter-radio-label"><input type="radio" name="loot-min-rarity" value="platinum" /> <span style="color:#ffffff; font-weight:bold;">✨ Chỉ Nhặt Bạch Kim Chí Tôn</span></label>
+          </div>
+        </div>
+
+        <div class="filter-group-box">
+          <div class="filter-box-title">2. Chủng Loại Vật Phẩm Cho Phép Nhặt:</div>
+          <div class="filter-check-list">
+            <label class="filter-check-label"><input type="checkbox" id="chk-loot-equip" checked /> <span>⚔ Trang Bị (Vũ khí, Giáp, Nón, Giày, Hộ thủ, Dây chuyền, Nhẫn)</span></label>
+            <label class="filter-check-label"><input type="checkbox" id="chk-loot-potion" checked /> <span>🧪 Đan Dược Tiêu Hao (Huyết Đan & Khí Hoàn)</span></label>
+            <label class="filter-check-label"><input type="checkbox" id="chk-loot-gem-charm" checked /> <span>💎 Đá Cường Hóa, Ngọc Khảm, Bùa Giám Định & Bảo Hộ Thân</span></label>
+          </div>
+        </div>
+
+        <div class="filter-btn-row">
+          <button id="btn-save-loot-filter" class="btn-wuxia-primary">💾 Áp Dụng Bộ Lọc Nhặt Đồ</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL 13: TU TIÊN HÓA CẢNH & THỌ NGUYÊN (PHÍM Y) -->
+    <div class="wuxia-modal modal-cultiv-container" id="modal-cultivation" style="display: none; max-width: 780px;">
+      <div class="modal-header">
+        <h3>⚡ TU TIÊN CẢNH GIỚI · THỌ NGUYÊN & ĐỘT PHÁ</h3>
+        <button class="btn-close-modal">✕</button>
+      </div>
+      <div class="modal-body modal-cultiv-body">
+        <!-- Tab Chuyển Đổi: Tu Luyện & Chuyển Phái Tiên Đạo -->
+        <div class="cultiv-nav-tabs">
+          <button id="tab-cultiv-progress" class="cultiv-tab-btn active">CẢNH GIỚI & THỌ NGUYÊN</button>
+          <button id="tab-cultiv-sects" class="cultiv-tab-btn">4 ĐẠI MÔN PHÁI TU TIÊN (LV.30+)</button>
+        </div>
+
+        <!-- PANE 1: TIẾN ĐỘ TU VI & ĐỘT PHÁ & THỌ NGUYÊN -->
+        <div id="pane-cultiv-progress" class="cultiv-pane active">
+          <div class="cultiv-top-card">
+            <div class="cultiv-bagua-sphere">
+              <div class="bagua-ring-spin"></div>
+              <div class="cultiv-realm-icon">☯</div>
+            </div>
+            <div class="cultiv-realm-info">
+              <div class="cultiv-realm-title" id="cultiv-current-realm-name">Luyện Khí Tầng 1</div>
+              <div class="cultiv-realm-sub">Bậc Cảnh Giới: <span id="cultiv-current-realm-tier" style="color: #38bdf8;">Phàm Nhân Nhập Đạo</span></div>
+              <div class="cultiv-cdr-stat">⚡ Giảm Thời Gian Hồi Chiêu: <strong id="cultiv-cdr-val" style="color: #00e5ff;">0%</strong></div>
+              <div class="cultiv-cdr-stat">🌌 Tăng Tốc Độ Tu Vi: <strong id="cultiv-tuvi-boost-val" style="color: #c084fc;">+0%</strong></div>
+            </div>
+          </div>
+
+          <!-- THANH THỌ NGUYÊN & TUỔI THỌ (PERMADEATH) -->
+          <div class="cultiv-stat-card" style="border-color: #f59e0b; background: rgba(30, 20, 10, 0.65);">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+              <span style="font-weight: bold; color: #fbbf24;">⏳ THỌ MỆNH TIÊN LỘ (TUỔI THỌ):</span>
+              <span id="cultiv-lifespan-label" style="font-weight: bold; color: #fef08a;">18 / 100 Năm</span>
+            </div>
+            <div class="cultiv-progress-bar">
+              <div id="cultiv-lifespan-fill" class="cultiv-bar-fill" style="width: 18%; background: linear-gradient(90deg, #10b981, #f59e0b);"></div>
+            </div>
+            <div style="font-size: 11px; color: #94a3b8; margin-top: 5px;">
+              * Lưu ý cốt tử: Mỗi 60 giây chơi game = 1 năm thọ mệnh trôi qua. Huynh đài cần Đột Phá cảnh giới cao hơn trước khi cạn kiệt thọ nguyên, nếu không sẽ <strong>Thọ Chung Chính Tẩm (Hóa Đạo Tử Vong Vĩnh Viễn)</strong>!
+            </div>
+          </div>
+
+          <!-- THANH TIẾN ĐỘ TU VI -->
+          <div class="cultiv-stat-card" style="border-color: #8b5cf6;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+              <span style="font-weight: bold; color: #c084fc;">✨ ĐIỂM TU VI TIÊN ĐẠO:</span>
+              <span id="cultiv-tuvi-label" style="font-weight: bold; color: #e9d5ff;">0 / 100 Tu Vi</span>
+            </div>
+            <div class="cultiv-progress-bar">
+              <div id="cultiv-tuvi-fill" class="cultiv-bar-fill" style="width: 0%; background: linear-gradient(90deg, #7e22ce, #00e5ff);"></div>
+            </div>
+            <div style="font-size: 11px; color: #94a3b8; margin-top: 5px;">
+              * Đánh quái rơi ra Tu Vi. Quái Tu Tiên và Boss rơi lượng Tu Vi cực lớn kèm Cửu U Tu Vi Đan (+5,000 Tu Vi) và Trường Sinh Thọ Nguyên Đan (+5 năm thọ mệnh)!
+            </div>
+          </div>
+
+          <!-- NÚT ĐỘT PHÁ -->
+          <div style="text-align: center; margin-top: 15px;">
+            <button id="btn-do-breakthrough" class="btn-breakthrough-action">
+              ⚡ TIẾN HÀNH ĐỘT PHÁ CẢNH GIỚI (LÔI KIẾP) ⚡
+            </button>
+            <div id="cultiv-breakthrough-msg" style="margin-top: 8px; font-size: 12px; color: #fbbf24;"></div>
+          </div>
+        </div>
+
+        <!-- PANE 2: 4 ĐẠI MÔN PHÁI TU TIÊN (CẤP 30+) -->
+        <div id="pane-cultiv-sects" class="cultiv-pane" style="display: none;">
+          <div class="cultiv-sects-intro">
+            Khi đạt <strong>Cấp 30 trở lên</strong>, hiệp khách có thể chính thức chuyển sang tu luyện 1 trong 4 Đại Tiên Môn thượng thừa, mở khóa bộ kỹ năng thần thông hoàn toàn mới!
+          </div>
+          <div class="cultiv-sects-grid">
+            <!-- Đạo Giáo: Thái Thanh -->
+            <div class="cultiv-sect-card" data-csect="dao">
+              <img src="assets/sects/sect_cultiv_dao.png" class="csect-avatar" alt="Thái Thanh" />
+              <h4>Thái Thanh Tiên Tông (Đạo Giáo)</h4>
+              <p>Ngự Kiếm Phi Hành · Thái Cực Linh Trận · Lôi Đình Kiếm Trảm. Giảm 20% hồi chiêu, sát thương diện rộng sấm sét cực khủng.</p>
+              <button class="btn-join-csect" data-csect="dao">GIA NHẬP ĐẠO MÔN</button>
+            </div>
+
+            <!-- Phật Giáo: Phạn Thiên -->
+            <div class="cultiv-sect-card" data-csect="buddha">
+              <img src="assets/sects/sect_cultiv_buddha.png" class="csect-avatar" alt="Phạn Thiên" />
+              <h4>Phạn Thiên Thiền Tự (Phật Giáo)</h4>
+              <p>Kim Cang Hàng Ma · Bồ Đề Kim Thân · Như Lai Thần Chưởng. Phản đòn 25% sát thương, hộ thể kim chung, hồi máu vô tận.</p>
+              <button class="btn-join-csect" data-csect="buddha">GIA NHẬP PHẬT MÔN</button>
+            </div>
+
+            <!-- Ma Giáo: U Minh -->
+            <div class="cultiv-sect-card" data-csect="demon">
+              <img src="assets/sects/sect_cultiv_demon.png" class="csect-avatar" alt="U Minh" />
+              <h4>U Minh Ma Tông (Ma Giáo)</h4>
+              <p>Thiên Ma Xé Rách · Huyết Ma Tế Đàn · Ma Hoàng Thần Biến. Hút máu 22%, cuồng bạo chí mạng cực hạn, thiêu đốt linh hồn.</p>
+              <button class="btn-join-csect" data-csect="demon">GIA NHẬP MA TÔNG</button>
+            </div>
+
+            <!-- Yêu Tộc: Vạn Yêu -->
+            <div class="cultiv-sect-card" data-csect="beast">
+              <img src="assets/sects/sect_cultiv_beast.png" class="csect-avatar" alt="Vạn Yêu" />
+              <h4>Vạn Yêu Thánh Điện (Yêu Tộc)</h4>
+              <p>Thái Cổ Long Trảo · Thiên Hồ Ảo Ảnh · Vạn Độc Hủ Cốt. Tốc độ vũ bão, né tránh 25%, độc sát bỏ qua 50% giáp quân thù.</p>
+              <button class="btn-join-csect" data-csect="beast">GIA NHẬP YÊU TỘC</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL 14: THỌ CHUNG CHÍNH TẨM - HÓA ĐẠO QUY KHƯ (PERMADEATH) -->
+    <div class="wuxia-modal modal-permadeath-container" id="modal-permadeath" style="display: none;">
+      <div class="permadeath-box">
+        <div class="permadeath-icon">💀</div>
+        <h2 style="color: #ef4444; font-size: 24px; text-shadow: 0 0 15px rgba(239, 68, 68, 0.8);">
+          THỌ CHUNG CHÍNH TẨM · HÓA ĐẠO QUY KHƯ
+        </h2>
+        <div style="font-size: 15px; color: #cbd5e1; line-height: 1.6; margin: 18px 0;" id="permadeath-msg-text">
+          Hiệp khách đã tận số thọ nguyên mà chưa kịp đốn ngộ đột phá cảnh giới cao hơn! Thân tiêu đạo vẫn, linh hồn tan biến vào cõi hư không vĩnh hằng!
+        </div>
+        <div style="color: #94a3b8; font-size: 13px; margin-bottom: 20px;">
+          * Nhân vật này đã hoàn toàn kết thúc sinh mệnh. Hãy tạo nhân vật mới để bắt đầu lại con đường tu tiên!
+        </div>
+        <button id="btn-permadeath-restart" class="btn-enter-wuxia" style="background: linear-gradient(135deg, #b91c1c, #450a0a);">
+          QUAY VỀ TẠO NHÂN VẬT MỚI 🔁
+        </button>
+      </div>
+    </div>
+
+    <!-- MODAL 15: SỰ KIỆN CƯỜNG GIẢ TỌA HÓA - NGUYÊN HỒN ÁC HÓA GIÁNG THẾ (WORLD EVENT) -->
+    <div class="wuxia-modal modal-revenant-container" id="modal-revenant-event" style="display: none;">
+      <div class="revenant-event-box">
+        <div class="revenant-header-glow">
+          <div class="revenant-skull-icon">💀</div>
+          <h2 class="revenant-title">⚠️ CƯỜNG GIẢ TỌA HÓA · NGUYÊN HỒN ÁC HÓA ⚠️</h2>
+          <div class="revenant-subtitle">SỰ KIỆN TRỪ MA VỆ ĐẠO TOÀN THẾ GIỚI</div>
+          <button class="btn-close-revenant" id="btn-close-revenant-modal">&times;</button>
+        </div>
+
+        <div class="revenant-body">
+          <div class="revenant-story-box">
+            <p id="lbl-revenant-story-msg" class="revenant-story-text">
+              "Cường giả đang tọa hóa, hồn thể ác hóa gây hại nhân gian mời chư vị đến trừ ma vệ đạo, phần thưởng trang bị người đó sẽ rớt ra sau khi nguyên hồn ác hóa bị đánh lui"
+            </p>
+          </div>
+
+          <div class="revenant-info-grid">
+            <div class="r-info-item">
+              <span class="r-label">👤 Cường Giả Tọa Hóa:</span>
+              <span class="r-val" id="lbl-revenant-owner-name">Tiền Bối Vô Danh</span>
+            </div>
+            <div class="r-info-item">
+              <span class="r-label">☯ Cảnh Giới / Môn Phái:</span>
+              <span class="r-val" id="lbl-revenant-owner-sect">Độ Kiếp Kiếm Tiên · Tiêu Dao</span>
+            </div>
+            <div class="r-info-item">
+              <span class="r-label">📍 Địa Điểm Giáng Lâm:</span>
+              <span class="r-val highlight-map" id="lbl-revenant-target-map">Bồng Lai Tiên Đảo</span>
+            </div>
+            <div class="r-info-item">
+              <span class="r-label">🎯 Tọa Độ Xuất Hiện:</span>
+              <span class="r-val" id="lbl-revenant-target-coords">(1250, 780)</span>
+            </div>
+            <div class="r-info-item full-row">
+              <span class="r-label">⚡ Sức Mạnh Nguyên Hồn:</span>
+              <span class="r-val danger-text">Máu Gấp 10 Lần (HP x10) · Công Kích x10 · Ma Hồn Thôn Thiên</span>
+            </div>
+            <div class="r-info-item full-row">
+              <span class="r-label">🎁 Phần Thưởng Rơi Rớt:</span>
+              <span class="r-val gold-text" id="lbl-revenant-loot-desc">Toàn bộ Trang Bị Đang Mặc + Ngân Lượng Tiền Bối + Tiên Đan Dược</span>
+            </div>
+          </div>
+
+          <div class="revenant-action-row">
+            <button id="btn-revenant-teleport-now" class="btn-revenant-primary pulse-danger">
+              ⚔️ THAM GIA TRỪ MA (TRUYỀN TỐNG NGAY)
+            </button>
+            <button id="btn-revenant-dismiss-later" class="btn-revenant-secondary">
+              ✕ TẠM ẨN / ĐỂ SAU
+            </button>
+          </div>
+        </div>
+    </div>
+
+    <!-- Thanh Kinh Nghiệm Đáy Màn Hình Chuẩn MMORPG (Bottom EXP Bar) -->
+    <div id="bottom-exp-bar" class="bottom-exp-bar" title="Thanh Tiến Trình Tu Luyện EXP">
+      <div id="bottom-exp-fill" class="bottom-exp-fill" style="width: 0%;"></div>
+      <div class="exp-ticks">
+        <span></span><span></span><span></span><span></span><span></span>
+        <span></span><span></span><span></span><span></span>
+      </div>
+      <span id="bottom-exp-text" class="bottom-exp-text">EXP: 0 / 100 (0.0%)</span>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="js/engine/AudioEngine.js?v=20260928_mobile"></script>
+  <script src="js/engine/Particles.js?v=20260928_mobile"></script>
+  <script src="js/engine/Camera.js?v=20260928_mobile"></script>
+  <script src="js/engine/Renderer.js?v=20260928_mobile"></script>
+  <script src="js/ui/UIManager.js?v=20260928_mobile"></script>
+  <script src="js/main.js?v=20260928_mobile"></script>
+</body>
+</html>
